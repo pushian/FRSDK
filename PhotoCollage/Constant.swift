@@ -30,10 +30,10 @@ struct Constants {
     
     static let bkImageRatio: CGFloat = 384.0 / 375.0
     
-    static let testImages: [UIImage] = [#imageLiteral(resourceName: "bk1"), #imageLiteral(resourceName: "bk2"), #imageLiteral(resourceName: "bk3"), #imageLiteral(resourceName: "bk4"), #imageLiteral(resourceName: "bk5")]
-    
+    static let testImages: [UIImage] = [UIImage.getBundleImage(name: "bk1"), UIImage.getBundleImage(name: "bk2"), UIImage.getBundleImage(name: "bk3"), UIImage.getBundleImage(name: "bk4"), UIImage.getBundleImage(name: "bk5")]
     
     struct notifications {
-        static let didTapDone = Notification.Name("did_tap_done")
+        static let FRdisplayAlert = Notification.Name("FR_display_alert")
+        static let FRdidTapDone = Notification.Name("FR_did_tap_done")
     }
 }

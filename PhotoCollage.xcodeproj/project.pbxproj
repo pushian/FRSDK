@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		85A39D211F4EC51000BDDD9A /* NSObject-PC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A39D201F4EC51000BDDD9A /* NSObject-PC.swift */; };
+		85A39D251F4ED85800BDDD9A /* FRPhotoCollageSDKtest.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 85A39D241F4ED85800BDDD9A /* FRPhotoCollageSDKtest.bundle */; };
 		85C51D131F4A658600700BEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C51D121F4A658600700BEF /* AppDelegate.swift */; };
 		85C51D151F4A658600700BEF /* OpenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C51D141F4A658600700BEF /* OpenViewController.swift */; };
 		85C51D181F4A658600700BEF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85C51D161F4A658600700BEF /* Main.storyboard */; };
@@ -31,7 +32,6 @@
 		85C51D511F4CE3E100700BEF /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C51D501F4CE3E100700BEF /* PreviewViewController.swift */; };
 		85C51D531F4D1FFF00700BEF /* UIViewController-PC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C51D521F4D1FFF00700BEF /* UIViewController-PC.swift */; };
 		85C51D551F4E7C3000700BEF /* UIImageView-PC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C51D541F4E7C3000700BEF /* UIImageView-PC.swift */; };
-		85C51D571F4E7D4F00700BEF /* FRPhotoCollageSDK.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 85C51D561F4E7D4F00700BEF /* FRPhotoCollageSDK.bundle */; };
 		85C51D611F4EAAB500700BEF /* FRPhotoCollageSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 85C51D5F1F4EAAB500700BEF /* FRPhotoCollageSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		85C51D641F4EAAB500700BEF /* FRPhotoCollageSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85C51D5D1F4EAAB500700BEF /* FRPhotoCollageSDK.framework */; };
 		85C51D661F4EAAB500700BEF /* FRPhotoCollageSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 85C51D5D1F4EAAB500700BEF /* FRPhotoCollageSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -53,7 +53,6 @@
 		85C51D791F4EAFA100700BEF /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85C51D271F4A74B300700BEF /* SnapKit.framework */; };
 		85C51D7A1F4EAFA100700BEF /* SVProgressHUD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85C51D281F4A74B300700BEF /* SVProgressHUD.framework */; };
 		85C51D7B1F4EAFA100700BEF /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85C51D291F4A74B300700BEF /* SwiftyJSON.framework */; };
-		85C51D7C1F4EAFBB00700BEF /* FRPhotoCollageSDK.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 85C51D561F4E7D4F00700BEF /* FRPhotoCollageSDK.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,6 +81,7 @@
 
 /* Begin PBXFileReference section */
 		85A39D201F4EC51000BDDD9A /* NSObject-PC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSObject-PC.swift"; sourceTree = "<group>"; };
+		85A39D241F4ED85800BDDD9A /* FRPhotoCollageSDKtest.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FRPhotoCollageSDKtest.bundle; sourceTree = "<group>"; };
 		85C51D0F1F4A658600700BEF /* PhotoCollage.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoCollage.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85C51D121F4A658600700BEF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		85C51D141F4A658600700BEF /* OpenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenViewController.swift; sourceTree = "<group>"; };
@@ -107,7 +107,6 @@
 		85C51D501F4CE3E100700BEF /* PreviewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
 		85C51D521F4D1FFF00700BEF /* UIViewController-PC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController-PC.swift"; sourceTree = "<group>"; };
 		85C51D541F4E7C3000700BEF /* UIImageView-PC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView-PC.swift"; sourceTree = "<group>"; };
-		85C51D561F4E7D4F00700BEF /* FRPhotoCollageSDK.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FRPhotoCollageSDK.bundle; sourceTree = "<group>"; };
 		85C51D5D1F4EAAB500700BEF /* FRPhotoCollageSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FRPhotoCollageSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		85C51D5F1F4EAAB500700BEF /* FRPhotoCollageSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FRPhotoCollageSDK.h; sourceTree = "<group>"; };
 		85C51D601F4EAAB500700BEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -145,7 +144,7 @@
 		85C51D061F4A658600700BEF = {
 			isa = PBXGroup;
 			children = (
-				85C51D561F4E7D4F00700BEF /* FRPhotoCollageSDK.bundle */,
+				85A39D241F4ED85800BDDD9A /* FRPhotoCollageSDKtest.bundle */,
 				85C51D111F4A658600700BEF /* PhotoCollage */,
 				85C51D5E1F4EAAB500700BEF /* FRPhotoCollageSDK */,
 				85C51D101F4A658600700BEF /* Products */,
@@ -358,8 +357,8 @@
 			files = (
 				85C51D1D1F4A658600700BEF /* LaunchScreen.storyboard in Resources */,
 				85C51D1A1F4A658600700BEF /* Assets.xcassets in Resources */,
-				85C51D571F4E7D4F00700BEF /* FRPhotoCollageSDK.bundle in Resources */,
 				85C51D181F4A658600700BEF /* Main.storyboard in Resources */,
+				85A39D251F4ED85800BDDD9A /* FRPhotoCollageSDKtest.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,7 +366,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				85C51D7C1F4EAFBB00700BEF /* FRPhotoCollageSDK.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

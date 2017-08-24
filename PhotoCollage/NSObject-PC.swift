@@ -7,10 +7,18 @@
 //
 
 
-import Foundation
 import UIKit
 
 func PostDoneNotification() {
-    let notification = Notification(name: Constants.notifications.didTapDone, object: nil, userInfo: nil)
+    let notification = Notification(name: Constants.notifications.FRdidTapDone, object: nil, userInfo: nil)
+    NotificationCenter.default.post(notification)
+}
+
+func PostAlertNotification(title: String, message: String) {
+    let info = [
+        "title": title,
+        "message": message
+    ]
+    let notification = Notification(name: Constants.notifications.FRdisplayAlert, object: info, userInfo: nil)
     NotificationCenter.default.post(notification)
 }

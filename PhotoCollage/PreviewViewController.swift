@@ -157,7 +157,7 @@ class PreviewViewController: BaseViewController {
 //        delegate?.didTapDone()
 //        self.PostDoneNotification()
         
-        let notification = Notification(name: Constants.notifications.didTapDone, object: nil, userInfo: nil)
+        let notification = Notification(name: Constants.notifications.FRdidTapDone, object: nil, userInfo: nil)
         NotificationCenter.default.post(notification)
     }
 

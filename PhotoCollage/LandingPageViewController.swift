@@ -45,10 +45,7 @@ public class FRPhotoCollageCreate: UIViewController {
     fileprivate var okBtn: UIButton! = {
         let t = UIButton()
         t.setTitle("OK  ", for: .normal)
-        let bundlePath: String = Bundle.main.path(forResource: "FRPhotoCollageSDK", ofType: "bundle")!
-        let bundle = Bundle(path: bundlePath)
-        let resource: String = bundle!.path(forResource: "rightArrow", ofType: "png")!
-        let image = UIImage(contentsOfFile: resource)
+        let image = UIImage.getBundleImage(name: "rightArrow")
         t.setImage(image, for: .normal)
         t.setTitleColor(.white, for: .normal)
         t.titleLabel?.font = UIFont.DefaultRegularWithSize(size: Scale.scaleY(y: 12))
@@ -76,7 +73,8 @@ public class FRPhotoCollageCreate: UIViewController {
         navigationItem.backBarButtonItem = backButton
         view.backgroundColor = .white
         
-        NotificationCenter.default.addObserver(self, selector: #selector(previewDoneHandler), name: Constants.notifications.didTapDone, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(previewDoneHandler), name: Constants.notifications.FRdidTapDone, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(displayAlert(notification:)), name: Constants.notifications.FRdisplayAlert, object: nil)
 
         view.addSubview(titleLabel)
         view.addSubview(coverImage)
@@ -90,6 +88,7 @@ public class FRPhotoCollageCreate: UIViewController {
         cancelLabel.addGestureRecognizer(gesture)
         setConstraints()
         flipBtn()
+        checkBundle()
     }
 
     override public func didReceiveMemoryWarning() {
@@ -154,5 +153,26 @@ public class FRPhotoCollageCreate: UIViewController {
     }
     func previewDoneHandler() {
         delegate?.didTapDone()
+    }
+    
+    func displayAlert(notification: Notification) {
+        if let info = notification.object as? [String: String] {
+            let title = info["title"] ?? ""
+            let msg = info["message"] ?? ""
+            displayAlert(title: title, message: msg, complete: nil)
+        }
+    }
+    func checkBundle() {
+        if let bundlePath: String = Bundle.main.path(forResource: "FRPhotoCollageSDK", ofType: "bundle") {
+            if let _ = Bundle(path: bundlePath) {
+                return
+            }
+        }
+        let info = [
+            "title": "Error",
+            "message": "The \"FRPhotoCollageSDK.bundle\" file is missing."
+        ]
+        let notification = Notification(name: Constants.notifications.FRdisplayAlert, object: info, userInfo: nil)
+        NotificationCenter.default.post(notification)
     }
 }
