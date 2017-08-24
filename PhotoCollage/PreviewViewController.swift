@@ -8,9 +8,7 @@
 
 import UIKit
 
-public class PreviewViewController: BaseViewController {
-    weak var delegate: FRPhotoCollageCreateDelegate?
-
+class PreviewViewController: BaseViewController {
     fileprivate var image: UIImage?
     fileprivate var bkView: UIImageView = {
         let t = UIImageView()
@@ -91,11 +89,11 @@ public class PreviewViewController: BaseViewController {
         self.image = image
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
@@ -156,7 +154,11 @@ public class PreviewViewController: BaseViewController {
     
     func doneHandler() {
 //        _ = dismiss(animated: true, completion: nil)
-        delegate?.didTapDone()
+//        delegate?.didTapDone()
+//        self.PostDoneNotification()
+        
+        let notification = Notification(name: Constants.notifications.didTapDone, object: nil, userInfo: nil)
+        NotificationCenter.default.post(notification)
     }
 
 }

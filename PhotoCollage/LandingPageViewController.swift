@@ -8,14 +8,15 @@
 
 import UIKit
 import SnapKit
-protocol FRPhotoCollageCreateDelegate: class {
+public protocol FRPhotoCollageCreateDelegate: class {
     func didTapCancel()
     func didTapDone()
 }
 
-public class FRPhotoCollageCreate: BaseViewController {
+public class FRPhotoCollageCreate: UIViewController {
 
     weak var delegate: FRPhotoCollageCreateDelegate?
+    
     fileprivate var titleLabel: UILabel! = {
         let t = UILabel()
         t.font = UIFont.DefaultSemiBoldWithSize(size: Scale.scaleY(y: 14))
@@ -65,6 +66,14 @@ public class FRPhotoCollageCreate: BaseViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        
+        let backButton = UIBarButtonItem()
+        backButton.title = ""
+        navigationItem.backBarButtonItem = backButton
+        view.backgroundColor = .white
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(previewDoneHandler), name: Constants.notifications.didTapDone, object: nil)
+
         view.addSubview(titleLabel)
         view.addSubview(coverImage)
         view.addSubview(infoLabel)
@@ -138,5 +147,8 @@ public class FRPhotoCollageCreate: BaseViewController {
     func okHandler() {
         let vc = MainViewController()
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+    func previewDoneHandler() {
+        delegate?.didTapDone()
     }
 }

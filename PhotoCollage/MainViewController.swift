@@ -71,7 +71,7 @@ class MainViewController: BaseViewController {
         view.addSubview(collectionView)
         collectionView.delegate = self
         collectionView.dataSource = self
-        
+//        self.post
         setConstraints()
         setupFrames()
     }

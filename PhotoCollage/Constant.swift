@@ -32,4 +32,8 @@ struct Constants {
     
     static let testImages: [UIImage] = [#imageLiteral(resourceName: "bk1"), #imageLiteral(resourceName: "bk2"), #imageLiteral(resourceName: "bk3"), #imageLiteral(resourceName: "bk4"), #imageLiteral(resourceName: "bk5")]
     
+    
+    struct notifications {
+        static let didTapDone = Notification.Name("did_tap_done")
+    }
 }
