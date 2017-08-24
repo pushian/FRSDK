@@ -45,7 +45,11 @@ public class FRPhotoCollageCreate: UIViewController {
     fileprivate var okBtn: UIButton! = {
         let t = UIButton()
         t.setTitle("OK  ", for: .normal)
-        t.setImage(#imageLiteral(resourceName: "rightArrow"), for: .normal)
+        let bundlePath: String = Bundle.main.path(forResource: "FRPhotoCollageSDK", ofType: "bundle")!
+        let bundle = Bundle(path: bundlePath)
+        let resource: String = bundle!.path(forResource: "rightArrow", ofType: "png")!
+        let image = UIImage(contentsOfFile: resource)
+        t.setImage(image, for: .normal)
         t.setTitleColor(.white, for: .normal)
         t.titleLabel?.font = UIFont.DefaultRegularWithSize(size: Scale.scaleY(y: 12))
         t.backgroundColor = UIColor.phtMidGreen
