@@ -15,7 +15,43 @@ $ brew install carthage
 To integrate SnapKit into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "SnapKit/SnapKit" ~> 3.2.0
+github "Pushian/FRSDK"
 ```
 
 Run `carthage update` to build the framework and drag the built `SnapKit.framework` into your Xcode project.
+
+
+# Usage
+
+## Quick Start
+
+```swift
+import FRSDK
+
+class MyViewController: UIViewController {
+
+   func functionToTriggerPhotoCollage() {
+        let vc = FRPhotoCollageCreate()
+        vc.delegate = self 
+        
+        let nav = UINavigationController(rootViewController: vc)
+        self.present(nav, animated: true, completion: nil)
+    }
+
+}
+```
+## Call Back Functions
+
+```swift
+extension MyViewController: FRPhotoCollageCreateDelegate {
+    func didTapCancel() {
+        debugPrint("PhotoCollage is dismissed.")
+    }
+    
+    func didTapDone() {
+        debugPrint("PhotoCollage is completed.")
+    }
+    
+}
+``
+
