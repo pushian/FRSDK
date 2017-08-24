@@ -86,6 +86,7 @@ class MainViewController: BaseViewController {
         super.viewWillAppear(animated)
         UIView.animate(withDuration: 0.3) { 
             self.navigationController?.navigationBar.isHidden = false
+            self.navigationController?.navigationBar.isTranslucent = false
         }
     }
     
