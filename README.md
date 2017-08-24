@@ -53,5 +53,5 @@ extension MyViewController: FRPhotoCollageCreateDelegate {
     }
     
 }
-``
+```
 
