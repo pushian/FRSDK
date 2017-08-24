@@ -1,2 +1,5 @@
 # FRSDK
-Testing SDK for FaceRecog
+FaceRecog PhotoCollage SDK for OSP
+
+# Installation
+## Carthage
