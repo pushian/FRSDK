@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		85A39D211F4EC51000BDDD9A /* NSObject-PC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A39D201F4EC51000BDDD9A /* NSObject-PC.swift */; };
 		85A39D271F4ED8A400BDDD9A /* FRPhotoCollageSDK.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 85A39D261F4ED8A400BDDD9A /* FRPhotoCollageSDK.bundle */; };
+		85A39D281F4F268600BDDD9A /* FRPhotoCollageSDK.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 85A39D261F4ED8A400BDDD9A /* FRPhotoCollageSDK.bundle */; };
 		85C51D131F4A658600700BEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C51D121F4A658600700BEF /* AppDelegate.swift */; };
 		85C51D151F4A658600700BEF /* OpenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C51D141F4A658600700BEF /* OpenViewController.swift */; };
 		85C51D181F4A658600700BEF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85C51D161F4A658600700BEF /* Main.storyboard */; };
@@ -366,6 +367,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				85A39D281F4F268600BDDD9A /* FRPhotoCollageSDK.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
