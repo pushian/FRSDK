@@ -15,7 +15,7 @@ public protocol FRPhotoCollageCreateDelegate: class {
 
 public class FRPhotoCollageCreate: UIViewController {
 
-    weak var delegate: FRPhotoCollageCreateDelegate?
+    public weak var delegate: FRPhotoCollageCreateDelegate?
     
     fileprivate var titleLabel: UILabel! = {
         let t = UILabel()
