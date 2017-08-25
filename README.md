@@ -18,7 +18,15 @@ To integrate SnapKit into your Xcode project using Carthage, specify it in your 
 github "Pushian/FRSDK"
 ```
 
-Run `carthage update` to build the framework and drag the built `SnapKit.framework` into your Xcode project.
+Run `carthage update` to build the framework and drag the following built 
+`Alamofire.framework`
+`AlamofireImage.framework`
+`FRPhotoCollageSDK.framework`
+`SnapKit.framework`
+`SVProgressHUD.framework`
+`SwiftyJSON.framework`
+as well as the bundle file `FRPhotoCollageSDK.bundle` inside `FRPhotoCollageSDK.framework`
+into your Xcode project.
 
 
 # Usage
