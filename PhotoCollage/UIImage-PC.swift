@@ -10,12 +10,12 @@ import UIKit
 
 extension UIImage {
     
-    class func getBundleImage(name: String, replaceColor: UIColor? = nil) -> UIImage  {
+    class func FRGetBundleImage(name: String, replaceColor: UIColor? = nil) -> UIImage  {
         if let bundlePath: String = Bundle.main.path(forResource: "FRPhotoCollageSDK", ofType: "bundle") {
             if let bundle = Bundle(path: bundlePath) {
                 let resource: String = bundle.path(forResource: name, ofType: "png")!
                 if let color = replaceColor {
-                    return (UIImage(contentsOfFile: resource)?.imageByReplacingContentWithColor(color: color))!
+                    return (UIImage(contentsOfFile: resource)?.FRImageByReplacingContentWithColor(color: color))!
                 } else {
                     return UIImage(contentsOfFile: resource)!
                 }
@@ -32,7 +32,7 @@ extension UIImage {
         self.init(cgImage: (image?.cgImage)!)
     }
     
-    func imageByReplacingContentWithColor(color: UIColor) -> UIImage {
+    func FRImageByReplacingContentWithColor(color: UIColor) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(self.size, false, self.scale)
         color.setFill()
         

@@ -31,7 +31,7 @@ class BKViewCollectionViewCell: UICollectionViewCell {
     var selectedView: UIImageView! = {
         let t = UIImageView()
 //        t.image = #imageLiteral(resourceName: "selectedIcon")
-        t.applyBundleImage(name: "selectedIcon")
+        t.FRApplyBundleImage(name: "selectedIcon")
         t.contentMode = .scaleAspectFit
         return t
     }()

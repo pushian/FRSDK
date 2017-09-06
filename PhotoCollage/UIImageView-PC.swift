@@ -10,12 +10,12 @@
 import UIKit
 
 extension UIImageView {
-    func applyBundleImage(name: String, replaceColor: UIColor? = nil) -> Void  {
+    func FRApplyBundleImage(name: String, replaceColor: UIColor? = nil) -> Void  {
         if let bundlePath: String = Bundle.main.path(forResource: "FRPhotoCollageSDK", ofType: "bundle") {
             if let bundle = Bundle(path: bundlePath) {
                 let resource: String = bundle.path(forResource: name, ofType: "png")!
                 if let color = replaceColor {
-                    self.image = UIImage(contentsOfFile: resource)?.imageByReplacingContentWithColor(color: color)
+                    self.image = UIImage(contentsOfFile: resource)?.FRImageByReplacingContentWithColor(color: color)
                 } else {
                     self.image = UIImage(contentsOfFile: resource)
                 }

@@ -120,7 +120,7 @@ class MainViewController: BaseViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if self.isMovingFromParentViewController {
-            displayAlert(title: "test", message: "test", complete: nil)
+            FRDisplayAlert(title: "test", message: "test", complete: nil)
         }
     }
     
@@ -556,7 +556,7 @@ class MainViewController: BaseViewController {
     func previewHandler() {
         for each in frames {
             if each.image == nil {
-                displayAlert(title: "Reminder", message: "Please ensure there is no empty frame!", complete: nil)
+                FRDisplayAlert(title: "Reminder", message: "Please ensure there is no empty frame!", complete: nil)
                 return
             }
         }
@@ -569,7 +569,7 @@ class MainViewController: BaseViewController {
         super.rightHandler()
         for each in frames {
             if each.image == nil {
-                displayAlert(title: "Reminder", message: "Please ensure there is no empty frame!", complete: nil)
+                FRDisplayAlert(title: "Reminder", message: "Please ensure there is no empty frame!", complete: nil)
                 return
             }
         }
@@ -693,7 +693,7 @@ extension MainViewController: UIActionSheetDelegate {
                 picker.sourceType = .camera
                 self.present(picker, animated: true, completion: nil)
             } else {
-                displayAlert(title: "Error", message: "This device doesn't have camera.", complete: nil)
+                FRDisplayAlert(title: "Error", message: "This device doesn't have camera.", complete: nil)
             }
         case "Select From Gallery":
             if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
@@ -707,7 +707,7 @@ extension MainViewController: UIActionSheetDelegate {
                     picker.viewControllers[0].navigationItem.backBarButtonItem = backButton
                 })
             } else {
-                displayAlert(title: "Error", message: "This device doesn't have cameral roll.", complete: nil)
+                FRDisplayAlert(title: "Error", message: "This device doesn't have cameral roll.", complete: nil)
             }
         case "Crop & Rotate":
             let vc = IGRPhotoTweakViewController()

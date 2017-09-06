@@ -29,7 +29,7 @@ public class FRPhotoCollageCreate: UIViewController {
         let t = UIImageView()
         t.contentMode = .scaleAspectFit
 //        t.image = #imageLiteral(resourceName: "splash-image")
-        t.applyBundleImage(name: "splash-image")
+        t.FRApplyBundleImage(name: "splash-image")
         return t
     }()
     fileprivate var infoLabel: UILabel! = {
@@ -45,7 +45,7 @@ public class FRPhotoCollageCreate: UIViewController {
     fileprivate var okBtn: UIButton! = {
         let t = UIButton()
         t.setTitle("OK  ", for: .normal)
-        let image = UIImage.getBundleImage(name: "rightArrow")
+        let image = UIImage.FRGetBundleImage(name: "rightArrow")
         t.setImage(image, for: .normal)
         t.setTitleColor(.white, for: .normal)
         t.titleLabel?.font = UIFont.DefaultRegularWithSize(size: Scale.scaleY(y: 12))
@@ -159,7 +159,7 @@ public class FRPhotoCollageCreate: UIViewController {
         if let info = notification.object as? [String: String] {
             let title = info["title"] ?? ""
             let msg = info["message"] ?? ""
-            displayAlert(title: title, message: msg, complete: nil)
+            FRDisplayAlert(title: title, message: msg, complete: nil)
         }
     }
     func checkBundle() {

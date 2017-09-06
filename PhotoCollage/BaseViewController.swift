@@ -17,7 +17,7 @@ class BaseViewController: UIViewController {
     }()
     var leftBtn: UIImageView! = {
         let t = UIImageView()
-        t.applyBundleImage(name: "leftArrow")
+        t.FRApplyBundleImage(name: "leftArrow")
         t.contentMode = .left
         t.isUserInteractionEnabled = true
 //        t.setImage(UIImage.getBundleImage(name: "leftArrow"), for: .normal)

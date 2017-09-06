@@ -37,7 +37,7 @@ struct Constants {
     
     static let bkImageRatio: CGFloat = 384.0 / 375.0
     
-    static let testImages: [UIImage] = [UIImage.getBundleImage(name: "bk1"), UIImage.getBundleImage(name: "bk2"), UIImage.getBundleImage(name: "bk4"), UIImage.getBundleImage(name: "bk5")]
+    static let testImages: [UIImage] = [UIImage.FRGetBundleImage(name: "bk1"), UIImage.FRGetBundleImage(name: "bk2"), UIImage.FRGetBundleImage(name: "bk4"), UIImage.FRGetBundleImage(name: "bk5")]
     
     struct notifications {
         static let FRdisplayAlert = Notification.Name("FR_display_alert")

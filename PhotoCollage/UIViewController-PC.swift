@@ -10,7 +10,7 @@ import UIKit
 import SVProgressHUD
 
 extension UIViewController {
-    func displayAlert(title: String, message: String, complete: (() -> Void)?) {
+    func FRDisplayAlert(title: String, message: String, complete: (() -> Void)?) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
             if let complete = complete {

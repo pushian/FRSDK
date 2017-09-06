@@ -123,7 +123,7 @@ extension EditPhotoViewController: UIActionSheetDelegate {
                     picker.viewControllers[0].navigationItem.backBarButtonItem = backButton
                 })
             } else {
-                displayAlert(title: "Error", message: "This device doesn't have cameral roll.", complete: nil)
+                FRDisplayAlert(title: "Error", message: "This device doesn't have cameral roll.", complete: nil)
             }
         case 1: // Take photo // edit
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
@@ -132,7 +132,7 @@ extension EditPhotoViewController: UIActionSheetDelegate {
                 picker.sourceType = .camera
                 self.present(picker, animated: true, completion: nil)
             } else {
-                displayAlert(title: "Error", message: "This device doesn't have camera.", complete: nil)
+                FRDisplayAlert(title: "Error", message: "This device doesn't have camera.", complete: nil)
             }
         default:
             break

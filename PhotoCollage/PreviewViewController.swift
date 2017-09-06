@@ -32,7 +32,7 @@ class PreviewViewController: BaseViewController {
     fileprivate var insView: UIImageView! = {
         let t = UIImageView()
 //        t.image = #imageLiteral(resourceName: "icon_instagram")
-        t.applyBundleImage(name: "icon-instagram")
+        t.FRApplyBundleImage(name: "icon-instagram")
         t.backgroundColor = .clear
         t.isUserInteractionEnabled = true
         t.contentMode = .scaleAspectFit
@@ -43,7 +43,7 @@ class PreviewViewController: BaseViewController {
     fileprivate var fbView: UIImageView! = {
         let t = UIImageView()
 //        t.image = #imageLiteral(resourceName: "icon_facebook")
-        t.applyBundleImage(name: "icon-facebook")
+        t.FRApplyBundleImage(name: "icon-facebook")
 //        debugPrint("fb is ok")
         t.backgroundColor = .clear
         t.isUserInteractionEnabled = true
@@ -55,7 +55,7 @@ class PreviewViewController: BaseViewController {
     fileprivate var twtView: UIImageView! = {
         let t = UIImageView()
 //        t.image = #imageLiteral(resourceName: "icon_twitter")
-        t.applyBundleImage(name: "icon-twitter")
+        t.FRApplyBundleImage(name: "icon-twitter")
 //        debugPrint("twt is ok")
         t.backgroundColor = .clear
         t.isUserInteractionEnabled = true
@@ -67,7 +67,7 @@ class PreviewViewController: BaseViewController {
     fileprivate var waView: UIImageView! = {
         let t = UIImageView()
 //        t.image = #imageLiteral(resourceName: "icon_whatsapp")
-        t.applyBundleImage(name: "icon-whatsapp")
+        t.FRApplyBundleImage(name: "icon-whatsapp")
 //        debugPrint("app is ok")
         t.backgroundColor = .clear
         t.isUserInteractionEnabled = true
@@ -79,7 +79,7 @@ class PreviewViewController: BaseViewController {
     fileprivate var mailView: UIImageView! = {
         let t = UIImageView()
 //        t.image = #imageLiteral(resourceName: "icon_gmail")
-        t.applyBundleImage(name: "icon-gmail")
+        t.FRApplyBundleImage(name: "icon-gmail")
 //        debugPrint("mail is ok")
         t.backgroundColor = .clear
         t.isUserInteractionEnabled = true
