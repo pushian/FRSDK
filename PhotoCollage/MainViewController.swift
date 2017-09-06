@@ -11,7 +11,7 @@ import PushianPhotoTweaks
 import Photos
 import CoreLocation
 import SVProgressHUD
-import Async
+//import Async
 import CoreImage
 
 
@@ -135,16 +135,27 @@ class MainViewController: BaseViewController {
     
     func processPhoto() {
         SVProgressHUD.show()
-        Async.background {
+//        DispatchQueue.backg
+        DispatchQueue.global(qos: .background).async {
             while self.count != self.totalCount {
                 debugPrint(self.count)
             }
             SVProgressHUD.dismiss()
-            Async.main{
+            DispatchQueue.main.async {
                 self.setupFrames()
-
+                
             }
         }
+//        Async.background {
+//            while self.count != self.totalCount {
+//                debugPrint(self.count)
+//            }
+//            SVProgressHUD.dismiss()
+//            Async.main{
+//                self.setupFrames()
+//
+//            }
+//        }
         debugPrint(validImages.count)
     }
     
@@ -180,7 +191,8 @@ class MainViewController: BaseViewController {
             // Access has been granted.
             debugPrint("Access has been granted.")
             SVProgressHUD.show()
-            Async.background {
+//            Async.background {
+            DispatchQueue.global(qos: .background).async {
                 self.getPhoto()
             }
 //            getPhoto()
@@ -205,7 +217,8 @@ class MainViewController: BaseViewController {
                 if (newStatus == PHAuthorizationStatus.authorized) {
                     debugPrint("has been granted 1st time")
                     SVProgressHUD.show()
-                    Async.background {
+//                    Async.background {
+                    DispatchQueue.global(qos: .background).async {
                         self.getPhoto()
                     }
                 }
@@ -341,7 +354,9 @@ class MainViewController: BaseViewController {
         
         self.validImages = [UIImage]()
         SVProgressHUD.dismiss()
-        Async.main{
+//        Async.main{
+        DispatchQueue.main.async {
+
             self.setupFrames()
         }
         
@@ -414,9 +429,13 @@ class MainViewController: BaseViewController {
     
     func settingHandler() {
         if let url = URL(string:UIApplicationOpenSettingsURLString) {
-            UIApplication.shared.open(url, options: [:], completionHandler: { (finished) in
-                debugPrint("finished")
-            })
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: { (finished) in
+                    debugPrint("finished")
+                })
+            } else {
+                // Fallback on earlier versions
+            }
         }
     }
     

@@ -117,14 +117,12 @@
 		85C51D761F4EAF4900700BEF /* UIImageView-PC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C51D541F4E7C3000700BEF /* UIImageView-PC.swift */; };
 		85E767601F5FA11F002880A0 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85C51D251F4A74B300700BEF /* Alamofire.framework */; };
 		85E767611F5FA11F002880A0 /* AlamofireImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85C51D261F4A74B300700BEF /* AlamofireImage.framework */; };
-		85E767621F5FA11F002880A0 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85E767561F5D32A8002880A0 /* Async.framework */; };
 		85E767631F5FA11F002880A0 /* PushianPhotoTweaks.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8530F81C1F5407710094EB49 /* PushianPhotoTweaks.framework */; };
 		85E767641F5FA11F002880A0 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85C51D271F4A74B300700BEF /* SnapKit.framework */; };
 		85E767651F5FA11F002880A0 /* SVProgressHUD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85C51D281F4A74B300700BEF /* SVProgressHUD.framework */; };
 		85E767661F5FA11F002880A0 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85C51D291F4A74B300700BEF /* SwiftyJSON.framework */; };
 		85E767671F5FA145002880A0 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85C51D251F4A74B300700BEF /* Alamofire.framework */; };
 		85E767681F5FA145002880A0 /* AlamofireImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85C51D261F4A74B300700BEF /* AlamofireImage.framework */; };
-		85E767691F5FA145002880A0 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85E767561F5D32A8002880A0 /* Async.framework */; };
 		85E7676A1F5FA145002880A0 /* PushianPhotoTweaks.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8530F81C1F5407710094EB49 /* PushianPhotoTweaks.framework */; };
 		85E7676B1F5FA145002880A0 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85C51D271F4A74B300700BEF /* SnapKit.framework */; };
 		85E7676C1F5FA145002880A0 /* SVProgressHUD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85C51D281F4A74B300700BEF /* SVProgressHUD.framework */; };
@@ -234,7 +232,6 @@
 			files = (
 				85E767671F5FA145002880A0 /* Alamofire.framework in Frameworks */,
 				85E767681F5FA145002880A0 /* AlamofireImage.framework in Frameworks */,
-				85E767691F5FA145002880A0 /* Async.framework in Frameworks */,
 				85E7676A1F5FA145002880A0 /* PushianPhotoTweaks.framework in Frameworks */,
 				85E7676B1F5FA145002880A0 /* SnapKit.framework in Frameworks */,
 				85E7676C1F5FA145002880A0 /* SVProgressHUD.framework in Frameworks */,
@@ -248,7 +245,6 @@
 			files = (
 				85E767601F5FA11F002880A0 /* Alamofire.framework in Frameworks */,
 				85E767611F5FA11F002880A0 /* AlamofireImage.framework in Frameworks */,
-				85E767621F5FA11F002880A0 /* Async.framework in Frameworks */,
 				85E767631F5FA11F002880A0 /* PushianPhotoTweaks.framework in Frameworks */,
 				85E767641F5FA11F002880A0 /* SnapKit.framework in Frameworks */,
 				85E767651F5FA11F002880A0 /* SVProgressHUD.framework in Frameworks */,
@@ -622,7 +618,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/SVProgressHUD.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftyJSON.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/PushianPhotoTweaks.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Async.framework",
 			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Alamofire.framework",
@@ -631,7 +626,6 @@
 				"$(DERIVED_FILE_DIR)/SVProgressHUD.framework",
 				"$(DERIVED_FILE_DIR)/SwiftyJSON.framework",
 				"$(DERIVED_FILE_DIR)/PushianPhotoTweaks.framework",
-				"$(DERIVED_FILE_DIR)/Async.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -889,6 +883,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = PhotoCollage/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = sg.fooyo.PhotoCollage;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -907,6 +902,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = PhotoCollage/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = sg.fooyo.PhotoCollage;
 				PRODUCT_NAME = "$(TARGET_NAME)";
