@@ -20,7 +20,16 @@ class PhotoFrame: UIImageView {
         t.textAlignment = .center
         return t
     }()
-    
+    fileprivate var infoLableTwo: UILabel! = {
+        let t = UILabel()
+        t.text = "Tap to set your photo"
+        t.numberOfLines = 0
+        t.font = UIFont.DefaultSemiBoldWithSize(size: Scale.scaleY(y: 12))
+        t.textColor = UIColor.phtAzure
+        t.backgroundColor = .clear
+        t.textAlignment = .center
+        return t
+    }()
     override init(frame: CGRect) {
         super.init(frame: frame)
         clipsToBounds = true
@@ -31,8 +40,16 @@ class PhotoFrame: UIImageView {
         layer.borderColor = UIColor.white.cgColor
         layer.borderWidth = 4
         addSubview(infoLable)
+        addSubview(infoLableTwo)
+        
         infoLable.isHidden = true
+        infoLableTwo.isHidden = true
         infoLable.snp.makeConstraints { (make) in
+            make.leading.equalTo(Scale.scaleX(x: 11))
+            make.trailing.equalTo(Scale.scaleX(x: -11))
+            make.center.equalToSuperview()
+        }
+        infoLableTwo.snp.makeConstraints { (make) in
             make.leading.equalTo(Scale.scaleX(x: 11))
             make.trailing.equalTo(Scale.scaleX(x: -11))
             make.center.equalToSuperview()
@@ -43,7 +60,18 @@ class PhotoFrame: UIImageView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func noImage() {
-        infoLable.isHidden = false
+    func noImage(withLabelOne: Bool = true) {
+        if withLabelOne {
+            infoLable.isHidden = false
+            infoLableTwo.isHidden = true
+        } else {
+            infoLableTwo.isHidden = false
+            infoLable.isHidden = true
+        }
+    }
+    
+    func gotImage() {
+        infoLable.isHidden = true
+        infoLableTwo.isHidden = true
     }
 }

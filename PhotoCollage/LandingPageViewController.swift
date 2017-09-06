@@ -36,7 +36,7 @@ public class FRPhotoCollageCreate: UIViewController {
         let t = UILabel()
         t.font = UIFont.DefaultSemiBoldWithSize(size: Scale.scaleY(y: 24))
         t.textColor = UIColor.black
-        t.text = "Create your own unique collage with the photos you took on Sentosa!"
+        t.text = "Create your own unique collage with the photos you took in Sentosa!"
         t.textAlignment = .center
         t.numberOfLines = 0
         return t

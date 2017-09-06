@@ -8,6 +8,7 @@
 
 
 import UIKit
+import CoreLocation
 
 struct Constants {
     
@@ -22,6 +23,12 @@ struct Constants {
         //            static let baseURL = "http://54.169.237.216/v1"
         #endif
     }
+    static let regionOne = CLCircularRegion(center: CLLocationCoordinate2D.init(latitude: 1.246664, longitude: 103.832981), radius: 1000, identifier: "regionOne")
+    static let regionTwo = CLCircularRegion(center: CLLocationCoordinate2D.init(latitude: 1.246506, longitude: 103.842322), radius: 1000, identifier: "regionTwo")
+    static let regionThree = CLCircularRegion(center: CLLocationCoordinate2D.init(latitude: 1.254076, longitude: 103.820066), radius: 1000, identifier: "regionThree")
+    static let regionFour = CLCircularRegion(center: CLLocationCoordinate2D.init(latitude: 1.257684, longitude: 103.811023), radius: 700, identifier: "regionFour")
+
+    static let sentosaRegions = [regionOne, regionTwo, regionThree, regionFour]
     
     static let imageLoadTime: Double = 0.3
     
@@ -30,7 +37,7 @@ struct Constants {
     
     static let bkImageRatio: CGFloat = 384.0 / 375.0
     
-    static let testImages: [UIImage] = [UIImage.getBundleImage(name: "bk1"), UIImage.getBundleImage(name: "bk2"), UIImage.getBundleImage(name: "bk3"), UIImage.getBundleImage(name: "bk4"), UIImage.getBundleImage(name: "bk5")]
+    static let testImages: [UIImage] = [UIImage.getBundleImage(name: "bk1"), UIImage.getBundleImage(name: "bk2"), UIImage.getBundleImage(name: "bk4"), UIImage.getBundleImage(name: "bk5")]
     
     struct notifications {
         static let FRdisplayAlert = Notification.Name("FR_display_alert")

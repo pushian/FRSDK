@@ -7,6 +7,9 @@
 //
 
 import UIKit
+import Social
+import Messages
+import MessageUI
 
 class PreviewViewController: BaseViewController {
     fileprivate var image: UIImage?
@@ -106,16 +109,30 @@ class PreviewViewController: BaseViewController {
         view.addSubview(bkView)
         view.addSubview(shareLabel)
         view.addSubview(insView)
+        let insGesture = UITapGestureRecognizer(target: self, action: #selector(insHandler))
+        insView.addGestureRecognizer(insGesture)
+        let fbGesture = UITapGestureRecognizer(target: self, action: #selector(fbHandler))
+        fbView.addGestureRecognizer(fbGesture)
+        let twtGesture = UITapGestureRecognizer(target: self, action: #selector(twtHandler))
+        twtView.addGestureRecognizer(twtGesture)
+        let emailGesture = UITapGestureRecognizer(target: self, action: #selector(emailHandler))
+        mailView.addGestureRecognizer(emailGesture)
+
         view.addSubview(fbView)
         view.addSubview(twtView)
         view.addSubview(waView)
         view.addSubview(mailView)
+        
+        
+        setRightBtn(title: "Done")
+        setTitle(title: "Preview & Share")
+        
         setConstraints()
     }
     
     func setConstraints() {
         bkView.snp.makeConstraints { (make) in
-            make.top.equalToSuperview()
+            make.top.equalTo(navView.snp.bottom)
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.height.equalTo(Constants.mainWidth * Constants.bkImageRatio)
@@ -152,6 +169,18 @@ class PreviewViewController: BaseViewController {
         }
     }
     
+    override func rightHandler() {
+        super.rightHandler()
+        
+        let notification = Notification(name: Constants.notifications.FRdidTapDone, object: nil, userInfo: nil)
+        NotificationCenter.default.post(notification)
+    }
+    
+    override func leftHandler() {
+        _ = self.navigationController?.popViewController(animated: true)
+    }
+
+    
     func doneHandler() {
 //        _ = dismiss(animated: true, completion: nil)
 //        delegate?.didTapDone()
@@ -161,4 +190,46 @@ class PreviewViewController: BaseViewController {
         NotificationCenter.default.post(notification)
     }
 
+    func insHandler() {
+        InstagramManager.sharedManager.postImageToInstagramWithCaption(imageInstagram: image!, instagramCaption: "test", view: self.view)
+    }
+    
+    func fbHandler() {
+        if let vc = SLComposeViewController(forServiceType:SLServiceTypeFacebook) {
+            vc.add(image!)
+            vc.add(URL(string: "http://www.example.com/"))
+            vc.setInitialText("#thestateoffun moments")
+            self.present(vc, animated: true, completion: nil)
+        }
+    }
+    func twtHandler() {
+        if let vc = SLComposeViewController(forServiceType:SLServiceTypeTwitter) {
+            vc.add(image!)
+            vc.add(URL(string: "http://www.example.com/"))
+            vc.setInitialText("#thestateoffun moments")
+            self.present(vc, animated: true, completion: nil)
+        }
+    }
+    func emailHandler() {
+        if( MFMailComposeViewController.canSendMail() ) {
+            
+            let mailComposer = MFMailComposeViewController()
+            mailComposer.mailComposeDelegate = self
+            
+            //Set the subject and message of the email
+            mailComposer.setSubject("#thestateoffun moments")
+            mailComposer.setMessageBody("#thestateoffun moments", isHTML: false)
+            let imageData: NSData = UIImagePNGRepresentation(image!)! as NSData
+            mailComposer.addAttachmentData(imageData as Data, mimeType: "image/png", fileName: "testing")
+            self.present(mailComposer, animated: true, completion: nil)
+        }
+    }
+}
+
+extension PreviewViewController: MFMailComposeViewControllerDelegate {
+//    func dids
+    func mailComposeController(_ controller: MFMailComposeViewController,
+                               didFinishWith result: MFMailComposeResult, error: Error?) {
+        _ = controller.dismiss(animated: true, completion: nil)
+    }
 }

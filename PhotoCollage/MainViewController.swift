@@ -7,11 +7,29 @@
 //
 
 import UIKit
+import PushianPhotoTweaks
+import Photos
+import CoreLocation
+import SVProgressHUD
+import Async
+import CoreImage
+
 
 class MainViewController: BaseViewController {
+
+    //    fileprivate var
+//    fileprivate var actionSheet
+    fileprivate var totalCount = 0
+    fileprivate var count = 0
+    fileprivate var validImages = [UIImage]()
+    fileprivate var mostFaces: UIImage?
+    fileprivate var oneFace = [UIImage]()
+    fileprivate var moreFace = [UIImage]()
+    fileprivate var noFace = [UIImage]()
     
-    
+    fileprivate var didLoad = false
     fileprivate var selectedIndex = 0
+    fileprivate var selectedFrame = 0
     fileprivate var infoLabel: UILabel! = {
         let t = UILabel()
         t.font = UIFont.DefaultSemiBoldWithSize(size: Scale.scaleY(y: 14))
@@ -59,8 +77,12 @@ class MainViewController: BaseViewController {
 //    fileprivate var xs = []
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
+        debugPrint(self.navigationItem.leftBarButtonItem)
+        debugPrint(self.navigationItem.backBarButtonItem?.isEnabled)
+        self.navigationItem.backBarButtonItem?.isEnabled = false
+        debugPrint(self.navigationItem.backBarButtonItem?.isEnabled)
         self.navigationItem.title = "Photo Collage"
         let preBtn = UIBarButtonItem(title: "Preview", style: .plain, target: self, action: #selector(previewHandler))
         self.navigationItem.rightBarButtonItem = preBtn
@@ -73,7 +95,20 @@ class MainViewController: BaseViewController {
         collectionView.dataSource = self
 //        self.post
         setConstraints()
-        setupFrames()
+//        getPhoto()
+//        getPhoto { (image) in
+//            if let image = image {
+//            }
+//        }
+        
+        setRightBtn(title: "Preview")
+        setTitle(title: "Photo Collage")
+        
+        if !didLoad {
+            checkStatus()
+        }
+//        processPhoto()
+//        setupFrames()
     }
     
     
@@ -82,17 +117,40 @@ class MainViewController: BaseViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        UIView.animate(withDuration: 0.3) { 
-            self.navigationController?.navigationBar.isHidden = false
-            self.navigationController?.navigationBar.isTranslucent = false
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if self.isMovingFromParentViewController {
+            displayAlert(title: "test", message: "test", complete: nil)
         }
+    }
+    
+//    override func viewDidLayoutSubviews() {
+//        super.viewDidLayoutSubviews()
+//        for each in frames {
+//            if each.image != nil {
+//                resizeFrame(index: frames.index(of: each)!)
+//            }
+//        }
+//    }
+    
+    func processPhoto() {
+        SVProgressHUD.show()
+        Async.background {
+            while self.count != self.totalCount {
+                debugPrint(self.count)
+            }
+            SVProgressHUD.dismiss()
+            Async.main{
+                self.setupFrames()
+
+            }
+        }
+        debugPrint(validImages.count)
     }
     
     func setConstraints() {
         infoLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(Scale.scaleY(y: 20))
+            make.top.equalTo(navView.snp.bottom).offset(Scale.scaleY(y: 20))
             make.leading.equalTo(Scale.scaleX(x: 20))
             make.trailing.equalTo(Scale.scaleX(x: -20))
         }
@@ -113,6 +171,255 @@ class MainViewController: BaseViewController {
         }
     }
     
+    
+    func checkStatus() {
+        // Get the current authorization state.
+        let status = PHPhotoLibrary.authorizationStatus()
+        
+        if (status == PHAuthorizationStatus.authorized) {
+            // Access has been granted.
+            debugPrint("Access has been granted.")
+            SVProgressHUD.show()
+            Async.background {
+                self.getPhoto()
+            }
+//            getPhoto()
+        }
+            
+        else if (status == PHAuthorizationStatus.denied) {
+            // Access has been denied.
+            debugPrint("Access has been denied.")
+            let alertController = UIAlertController(title: "Reminder", message: "The permission to access the camera roll has been denied. You may change the permission to enable the Photo Collage feature", preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Change Permission", style: .default, handler: { (action) in
+                self.settingHandler()
+            }))
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+            self.present(alertController, animated: true, completion: nil)
+        }
+            
+        else if (status == PHAuthorizationStatus.notDetermined) {
+            
+            // Access has not been determined.
+            PHPhotoLibrary.requestAuthorization({ (newStatus) in
+                
+                if (newStatus == PHAuthorizationStatus.authorized) {
+                    debugPrint("has been granted 1st time")
+                    SVProgressHUD.show()
+                    Async.background {
+                        self.getPhoto()
+                    }
+                }
+                    
+                else {
+                    debugPrint("has not been granted")
+                    let alertController = UIAlertController(title: "Reminder", message: "The permission to access the camera roll has been denied. You may change the permission to enable the Photo Collage feature", preferredStyle: .alert)
+                    alertController.addAction(UIAlertAction(title: "Change Permission", style: .default, handler: { (action) in
+                        //                self.ignoreBudget = true
+                        self.settingHandler()
+                    }))
+                    alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+                    self.present(alertController, animated: true, completion: nil)
+                }
+            })
+        }
+            
+        else if (status == PHAuthorizationStatus.restricted) {
+            // Restricted access - normally won't happen.
+            debugPrint("Restricted access")
+        }
+    }
+    
+    func getPhoto() {
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+        //        fetchOptions.des/
+        
+        let requestOptions = PHImageRequestOptions()
+        requestOptions.isSynchronous = true
+//        requestOptions.deliveryMode = .fastFormat
+        
+        let fetchResult = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: fetchOptions)
+        
+        debugPrint(fetchResult.count)
+        
+        //
+        let fromRange = IndexSet(0...fetchResult.count - 1)
+        let lastest100 = fetchResult.objects(at: fromRange)
+        let valid = lastest100.filter { (asset) -> Bool in
+            if let location = asset.location?.coordinate {
+                for each in Constants.sentosaRegions {
+                    if each.contains(location) {
+                        return true
+                    }
+                }
+                return false
+            }
+            return false
+        }
+        
+        
+        debugPrint(valid.count)
+        self.validImages = [UIImage]()
+        self.mostFaces = nil
+        self.oneFace = [UIImage]()
+        self.moreFace = [UIImage]()
+        self.noFace = [UIImage]()
+        
+        debugPrint("total count is \(valid.count)")
+        totalCount = valid.count
+        count = 0
+        let manager = PHImageManager.default()
+        
+        
+        if valid.count > 0 {
+            //            let count = valid.count > 4 ? 4 : valid.count
+            for each in 0..<valid.count {
+                let ass = valid[each]
+//                let targetSize = CGSize(width: ass.pixelWidth, height: ass.pixelHeight)
+                let ratio = Double(ass.pixelWidth) / Double(ass.pixelHeight)
+                let theMax: Double = 1024 / 4
+                var width: Double = theMax
+                var height: Double = 0
+                if ratio > 1 {
+                    height = theMax / ratio
+                } else {
+                    height = theMax
+                    width = theMax * ratio
+                }
+                debugPrint("========")
+                debugPrint(width)
+                debugPrint(ass.pixelWidth)
+                let targetSize = CGSize(width: width, height: height)
+                
+                manager.requestImage(for: ass,
+                                     targetSize: targetSize,
+                                     contentMode: .aspectFit,
+                                     options: requestOptions,
+                                     resultHandler: { image, info in
+                                        self.count = self.count + 1
+                                        debugPrint("handle request")
+                                        debugPrint(self.count)
+                                        if let image = image {
+                                            self.validImages.append(image)
+                                        }
+                })
+            }
+        }
+        
+        while self.count != self.totalCount {
+            debugPrint(self.count)
+        }
+        
+        let detector = CIDetector(ofType: CIDetectorTypeFace, context: nil, options: [CIDetectorAccuracy: CIDetectorAccuracyHigh])
+        var tmpCount = 0
+        var max: Int? = 0
+        for each in self.validImages {
+            tmpCount = tmpCount + 1
+            let ciImage = CIImage(image: each)
+//            let accuracy = cide
+            let foundFaces = detector?.features(in: ciImage!)
+            if let count = foundFaces?.count {
+                if count > max! {
+                    self.mostFaces = each
+                    max = foundFaces?.count
+                } else if count == 0 {
+                    self.noFace.append(each)
+                } else if count == 1 {
+                    self.oneFace.append(each)
+                } else {
+                    self.moreFace.append(each)
+                }
+            }
+//            if (foundFaces?.count)! > max! {
+//                self.mostFaces = each
+//                max = foundFaces?.count
+//            } else if ()!
+//            detector.
+            debugPrint(tmpCount)
+            debugPrint(foundFaces?.count)
+        }
+        
+        self.validImages = [UIImage]()
+        SVProgressHUD.dismiss()
+        Async.main{
+            self.setupFrames()
+        }
+        
+    }
+    
+//    func getPhoto(queryCallback: @escaping ((UIImage?) -> Void)) {
+////
+//        let fetchOptions = PHFetchOptions()
+//        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+////        fetchOptions.des/
+//        
+//        let requestOptions = PHImageRequestOptions()
+//        requestOptions.isSynchronous = true
+//        
+//        let fetchResult = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: fetchOptions)
+//        
+//        debugPrint(fetchResult.count)
+//        
+//        
+////        
+//        let fromRange = IndexSet(0...fetchResult.count - 1)
+//        let lastest100 = fetchResult.objects(at: fromRange)
+//        let valid = lastest100.filter { (asset) -> Bool in
+//            if let location = asset.location?.coordinate {
+//                for each in Constants.sentosaRegions {
+//                    if each.contains(location) {
+//                        return true
+//                    }
+//                }
+//                return false
+//            }
+//            return false
+//        }
+//        
+//        
+//        debugPrint(valid.count)
+//        
+//        if valid.count > 0 {
+//            let manager = PHImageManager.default()
+//            let asset = valid[0]
+//            let targetSize = CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
+//            
+//            manager.requestImage(for: asset,
+//                                 targetSize: targetSize,
+//                                 contentMode: .aspectFit,
+//                                 options: requestOptions,
+//                                 resultHandler: { image, info in
+//                                    queryCallback(image)
+//            })
+//        }
+//        
+////        if let asset = fetchResult.firstObject {
+////            debugPrint(asset.location?.coordinate.latitude)
+////            debugPrint(asset.location?.coordinate.longitude)
+////            
+////            let manager = PHImageManager.default()
+////            
+////            let targetSize = size == nil ? CGSize(width: asset.pixelWidth, height: asset.pixelHeight) : size!
+////            
+////            manager.requestImage(for: asset,
+////                                 targetSize: targetSize,
+////                                 contentMode: .aspectFit,
+////                                 options: requestOptions,
+////                                 resultHandler: { image, info in
+////                                    queryCallback(image)
+////            })
+////        }
+//        
+//    }
+    
+    func settingHandler() {
+        if let url = URL(string:UIApplicationOpenSettingsURLString) {
+            UIApplication.shared.open(url, options: [:], completionHandler: { (finished) in
+                debugPrint("finished")
+            })
+        }
+    }
+    
     func setupFrames() {
         var tag = 0
         for each in frames {
@@ -125,95 +432,160 @@ class MainViewController: BaseViewController {
             switch index {
             case 0:
                 frames[index].snp.makeConstraints({ (make) in
-                    make.top.equalTo(Scale.scaleY(y: 20))
-                    make.leading.equalTo(Scale.scaleX(x: 5))
+                    make.top.equalTo(Scale.scaleY(y: 16))
+                    make.leading.equalTo(Scale.scaleX(x: 1))
                     make.width.equalTo(widths[index])
                     make.height.equalTo(heights[index])
                 })
                 frames[index].transform = CGAffineTransform(rotationAngle: -(CGFloat.pi / 180.0 * 8.0))
-//                frames[index].image = #imageLiteral(resourceName: "p1")
-                frames[index].applyBundleImage(name: "p1")
                 let panGestureOne = UIPanGestureRecognizer(target: self, action: #selector(PanHandler))
                 frames[index].addGestureRecognizer(panGestureOne)
                 let pinchGestureOne = UIPinchGestureRecognizer(target: self, action: #selector(PinchHandler))
                 frames[index].addGestureRecognizer(pinchGestureOne)
                 let tapGestureOne = UITapGestureRecognizer(target: self, action: #selector(TapHandler))
                 frames[index].addGestureRecognizer(tapGestureOne)
-                
-//                let rotateGestureOne = UIRotationGestureRecognizer(target: self, action: #selector(RotateHandlerOne))
-//                frames[index].addGestureRecognizer(rotateGestureOne)
-//                let t = uigesture
+                let rotateGestureOne = UIRotationGestureRecognizer(target: self, action: #selector(RotateHandler))
+                frames[index].addGestureRecognizer(rotateGestureOne)
+                pinchGestureOne.delegate = self
+                rotateGestureOne.delegate = self
             case 1:
                 frames[index].snp.makeConstraints({ (make) in
-                    make.top.equalTo(Scale.scaleY(y: 53))
-                    make.leading.equalTo(frames[0].snp.trailing).offset(Scale.scaleX(x: 51))
+                    make.top.equalTo(Scale.scaleY(y: 49))
+                    make.leading.equalTo(Scale.scaleX(x: 162))
                     make.width.equalTo(widths[index])
                     make.height.equalTo(heights[index])
                 })
                 frames[index].transform = CGAffineTransform(rotationAngle: (CGFloat.pi / 180.0 * 14.0))
-//                frames[index].image = #imageLiteral(resourceName: "p2")
-                frames[index].applyBundleImage(name: "p2")
                 let panGestureTwo = UIPanGestureRecognizer(target: self, action: #selector(PanHandler))
                 frames[index].addGestureRecognizer(panGestureTwo)
                 let pinchGestureTwo = UIPinchGestureRecognizer(target: self, action: #selector(PinchHandler))
                 frames[index].addGestureRecognizer(pinchGestureTwo)
                 let tapGestureTwo = UITapGestureRecognizer(target: self, action: #selector(TapHandler))
                 frames[index].addGestureRecognizer(tapGestureTwo)
-
+                let rotateGestureTwo = UIRotationGestureRecognizer(target: self, action: #selector(RotateHandler))
+                frames[index].addGestureRecognizer(rotateGestureTwo)
+                pinchGestureTwo.delegate = self
+                rotateGestureTwo.delegate = self
             case 2:
                 frames[index].snp.makeConstraints({ (make) in
-                make.top.equalTo(Scale.scaleY(y: 26))
-                make.trailing.equalTo(Scale.scaleX(x: -38))
+                make.top.equalTo(Scale.scaleY(y: 22))
+                make.trailing.equalTo(Scale.scaleX(x: -34))
                 make.width.equalTo(widths[index])
                 make.height.equalTo(heights[index])
                 })
                 frames[index].transform = CGAffineTransform(rotationAngle: -(CGFloat.pi / 180.0 * 23.0))
-//                frames[index].image = #imageLiteral(resourceName: "p3")
-                frames[index].applyBundleImage(name: "p3")
                 let panGestureThree = UIPanGestureRecognizer(target: self, action: #selector(PanHandler))
                 frames[index].addGestureRecognizer(panGestureThree)
                 let pinchGestureThree = UIPinchGestureRecognizer(target: self, action: #selector(PinchHandler))
                 frames[index].addGestureRecognizer(pinchGestureThree)
                 let tapGestureThree = UITapGestureRecognizer(target: self, action: #selector(TapHandler))
                 frames[index].addGestureRecognizer(tapGestureThree)
+                let rotateGestureThree = UIRotationGestureRecognizer(target: self, action: #selector(RotateHandler))
+                frames[index].addGestureRecognizer(rotateGestureThree)
+                pinchGestureThree.delegate = self
+                rotateGestureThree.delegate = self
             case 3:
                 frames[index].snp.makeConstraints({ (make) in
-                    make.bottom.equalTo(Scale.scaleY(y: -27))
-                    make.leading.equalTo(Scale.scaleX(x: 29))
+                    make.bottom.equalTo(Scale.scaleY(y: -35))
+                    make.leading.equalTo(Scale.scaleX(x: 25))
                     make.width.equalTo(widths[index])
                     make.height.equalTo(heights[index])
                 })
                 frames[index].transform = CGAffineTransform(rotationAngle: -(CGFloat.pi / 180.0 * 9.0))
-//                frames[index].image = #imageLiteral(resourceName: "p4")
-                frames[index].applyBundleImage(name: "p4")
+               
                 let panGestureFour = UIPanGestureRecognizer(target: self, action: #selector(PanHandler))
                 frames[index].addGestureRecognizer(panGestureFour)
                 let pinchGestureFour = UIPinchGestureRecognizer(target: self, action: #selector(PinchHandler))
                 frames[index].addGestureRecognizer(pinchGestureFour)
                 let tapGestureFour = UITapGestureRecognizer(target: self, action: #selector(TapHandler))
                 frames[index].addGestureRecognizer(tapGestureFour)
+                let rotateGestureFour = UIRotationGestureRecognizer(target: self, action: #selector(RotateHandler))
+                frames[index].addGestureRecognizer(rotateGestureFour)
+                rotateGestureFour.delegate = self
+                rotateGestureFour.delegate = self
             default:
                 frames[index].snp.makeConstraints({ (make) in
-                    make.bottom.equalTo(Scale.scaleY(y: -36))
-                    make.trailing.equalTo(Scale.scaleX(x: -24))
+                    make.bottom.equalTo(Scale.scaleY(y: -60))
+                    make.trailing.equalTo(Scale.scaleX(x: -20))
                     make.width.equalTo(widths[index])
                     make.height.equalTo(heights[index])
                 })
                 frames[index].transform = CGAffineTransform(rotationAngle: (CGFloat.pi / 180.0 * 6.0))
-                frames[index].noImage()
                 let panGestureFive = UIPanGestureRecognizer(target: self, action: #selector(PanHandler))
                 frames[index].addGestureRecognizer(panGestureFive)
                 let pinchGestureFive = UIPinchGestureRecognizer(target: self, action: #selector(PinchHandler))
                 frames[index].addGestureRecognizer(pinchGestureFive)
                 let tapGestureFive = UITapGestureRecognizer(target: self, action: #selector(TapHandler))
                 frames[index].addGestureRecognizer(tapGestureFive)
+                let rotateGestureFive = UIRotationGestureRecognizer(target: self, action: #selector(RotateHandler))
+                frames[index].addGestureRecognizer(rotateGestureFive)
+                pinchGestureFive.delegate = self
+                rotateGestureFive.delegate = self
             }
         }
+        
+        for each in frames {
+            each.noImage(withLabelOne: false)
+        }
+        frames[4].noImage()
+        
+        for each in 0..<frames.count - 1 {
+            if each < noFace.count - 1 {
+                frames[each].image = noFace[each]
+                frames[each].gotImage()
+            }
+        }
+        for each in 1..<frames.count - 1 {
+            if each < oneFace.count - 1 {
+                frames[each].image = oneFace[each]
+                frames[each].gotImage()
+            }
+        }
+        for each in 2..<frames.count - 1 {
+            if each < moreFace.count - 1 {
+                frames[each].image = moreFace[each]
+                frames[each].gotImage()
+            }
+        }
+        if let image = mostFaces {
+            frames[3].image = image
+            frames[3].gotImage()
+        }
     }
+    
     func previewHandler() {
+        for each in frames {
+            if each.image == nil {
+                displayAlert(title: "Reminder", message: "Please ensure there is no empty frame!", complete: nil)
+                return
+            }
+        }
         let image = UIImage(view: bkView)
         let vc = PreviewViewController(image: image)
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    override func rightHandler() {
+        super.rightHandler()
+        for each in frames {
+            if each.image == nil {
+                displayAlert(title: "Reminder", message: "Please ensure there is no empty frame!", complete: nil)
+                return
+            }
+        }
+        let image = UIImage(view: bkView)
+        let vc = PreviewViewController(image: image)
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    override func leftHandler() {
+        let alertController = UIAlertController(title: "Reminder", message: "All the photos will be reset. Are you sure you want to continue?", preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action) in
+            _ = self.navigationController?.popViewController(animated: true)
+        }))
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        present(alertController, animated: true, completion: nil)
+
     }
     
     func PanHandler(gesture: UIPanGestureRecognizer) {
@@ -260,27 +632,21 @@ class MainViewController: BaseViewController {
         gesture.scale = 1;
     }
     
-    func RotateHandlerOne(gesture: UIRotationGestureRecognizer) {
-        debugPrint(gesture.rotation)
-        var lastRotation = CGFloat()
-//        self.view.bringSubview(toFront: viewRotate)
-        if(gesture.state == .ended){
-            lastRotation = 0.0;
-        }
-        let rotation = 0.0 - (lastRotation - gesture.rotation)
-        // var point = rotateGesture.location(in: viewRotate)
-        let currentTrans = gesture.view?.transform
-        let newTrans = currentTrans!.rotated(by: rotation)
-        gesture.view?.transform = newTrans
-        lastRotation = gesture.rotation
+    var lastRotation = CGFloat()
+
+    func RotateHandler(gesture: UIRotationGestureRecognizer) {
+        gesture.view?.transform = (gesture.view?.transform)!.rotated(by: gesture.rotation)
+        gesture.rotation = 0
     }
+    
     func TapHandler(gesture: UITapGestureRecognizer) {
         let tag = (gesture.view)!.tag
-        if tag == 4 {
-            let actionSheet = UIActionSheet(title: "Add a Photo", delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: nil, otherButtonTitles: "Take a Photo", "Select from Gallery")
+        selectedFrame = tag
+        if frames[selectedFrame].image == nil {
+            let actionSheet = UIActionSheet(title: "Add A Photo", delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: nil, otherButtonTitles: "Take A Photo", "Select From Gallery")
             actionSheet.show(in: self.view)
         } else {
-            let actionSheet = UIActionSheet(title: "Edit or Remove Photo", delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: nil, otherButtonTitles: "Edit Photo", "Remove Photo")
+            let actionSheet = UIActionSheet(title: "Edit Photo", delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: nil, otherButtonTitles: "Crop & Rotate", "Replace", "Remove")
             actionSheet.show(in: self.view)
         }
     }
@@ -289,7 +655,7 @@ class MainViewController: BaseViewController {
 
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return 4
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -310,16 +676,26 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         bkView.image = Constants.testImages[selectedIndex]
         collectionView.reloadData()
     }
+    
 }
 
 
 extension MainViewController: UIActionSheetDelegate {
     func actionSheet(_ actionSheet: UIActionSheet, clickedButtonAt buttonIndex: Int) {
-        switch (buttonIndex) {
-        case 0: // Cancel
+        let title = actionSheet.buttonTitle(at: buttonIndex)
+        switch  title! {
+        case "Cancel":
             break
-        case 2: // Select from Library
-            
+        case "Take A Photo":
+            if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                let picker = UIImagePickerController()
+                picker.delegate = self
+                picker.sourceType = .camera
+                self.present(picker, animated: true, completion: nil)
+            } else {
+                displayAlert(title: "Error", message: "This device doesn't have camera.", complete: nil)
+            }
+        case "Select From Gallery":
             if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
                 let picker = UIImagePickerController()
                 
@@ -333,18 +709,80 @@ extension MainViewController: UIActionSheetDelegate {
             } else {
                 displayAlert(title: "Error", message: "This device doesn't have cameral roll.", complete: nil)
             }
-        case 1: // Take photo
-            if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                let picker = UIImagePickerController()
-                picker.delegate = self
-                picker.sourceType = .camera
-                self.present(picker, animated: true, completion: nil)
-            } else {
-                displayAlert(title: "Error", message: "This device doesn't have camera.", complete: nil)
-            }
+        case "Crop & Rotate":
+            let vc = IGRPhotoTweakViewController()
+            vc.image = self.frames[selectedFrame].image
+            vc.delegate = self
+            let nav = UINavigationController(rootViewController: vc)
+            nav.navigationBar.isHidden = true
+            self.present(nav, animated: true, completion: nil)
+        case "Replace":
+            let actionSheet = UIActionSheet(title: "Replace a Photo", delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: nil, otherButtonTitles: "Take A Photo", "Select From Gallery")
+            actionSheet.show(in: self.view)
+        case "Remove":
+            let alertController = UIAlertController(title: "", message: "Are you sure to remove this photo?", preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action) in
+                self.frames[self.selectedFrame].snp.removeConstraints()
+                self.frames[self.selectedFrame].removeFromSuperview()
+            }))
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+            present(alertController, animated: true, completion: nil)
+
         default:
             break
         }
+//        switch (buttonIndex) {
+//        case 0: // Cancel
+//            break
+//        case 3: //Remove
+//            let alertController = UIAlertController(title: "", message: "Are you sure to remove this photo?", preferredStyle: .alert)
+//            alertController.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action) in
+//                self.frames[self.selectedFrame].snp.removeConstraints()
+//                self.frames[self.selectedFrame].removeFromSuperview()
+//            }))
+//            alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+//            present(alertController, animated: true, completion: nil)
+//        case 2: // Select from Library // Replace
+//            
+//            if frames[selectedFrame].image == nil {
+//                if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+//                    let picker = UIImagePickerController()
+//                    
+//                    picker.delegate = self
+//                    picker.sourceType = .photoLibrary
+//                    self.present(picker, animated: true, completion: {
+//                        let backButton = UIBarButtonItem()
+//                        backButton.title = ""
+//                        picker.viewControllers[0].navigationItem.backBarButtonItem = backButton
+//                    })
+//                } else {
+//                    displayAlert(title: "Error", message: "This device doesn't have cameral roll.", complete: nil)
+//                }
+//            } else {
+//                let actionSheet = UIActionSheet(title: "Replace a Photo", delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: nil, otherButtonTitles: "Take a Photo", "Select from Gallery")
+//                actionSheet.show(in: self.view)
+//            }
+//        case 1: // Take photo // edit
+//            if frames[selectedFrame].image == nil {
+//                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+//                    let picker = UIImagePickerController()
+//                    picker.delegate = self
+//                    picker.sourceType = .camera
+//                    self.present(picker, animated: true, completion: nil)
+//                } else {
+//                    displayAlert(title: "Error", message: "This device doesn't have camera.", complete: nil)
+//                }
+//            } else {
+//                let vc = IGRPhotoTweakViewController()
+//                vc.image = self.frames[selectedFrame].image
+//                vc.delegate = self
+//                let nav = UINavigationController(rootViewController: vc)
+//                nav.navigationBar.isHidden = true
+//                self.present(nav, animated: true, completion: nil)
+//            }
+//        default:
+//            break
+//        }
     }
 }
 
@@ -352,17 +790,68 @@ extension MainViewController: UIActionSheetDelegate {
 extension MainViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
-//            let imageCropVC = RSKImageCropViewController(image: image)
-//            imageCropVC.delegate = self
-//            if picker.sourceType == .camera {
-//                dismiss(animated: false, completion: nil)
-//                let nav = UINavigationController(rootViewController: imageCropVC)
-//                present(nav, animated: true, completion: nil)
-//            } else {
-//                picker.pushViewController(imageCropVC, animated: true)
-//            }
+            self.frames[selectedFrame].image = image
+            self.frames[selectedFrame].gotImage()
+            dismiss(animated: true, completion: nil)
+            let vc = IGRPhotoTweakViewController()
+            vc.image = self.frames[selectedFrame].image
+            vc.delegate = self
+            let nav = UINavigationController(rootViewController: vc)
+            nav.navigationBar.isHidden = true
+            self.present(nav, animated: true, completion: nil)
+//            
+//            debugPrint("i got you")
+//            frames[selectedFrame].image = image
+//            frames[selectedFrame].gotImage()
+        }
+    }
+}
+extension MainViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+}
+
+extension MainViewController: EditPhotoViewControllerDelegate {
+    func didEndEdit(image: UIImage) {
+        frames[selectedFrame].image = image
+    }
+}
+
+extension MainViewController: IGRPhotoTweakViewControllerDelegate {
+    /**
+     Called on cropping image canceled
+     */
+    @objc func photoTweaksControllerDidCancel(_ controller: IGRPhotoTweakViewController) {
+    }
+
+    func photoTweaksController(_ controller: IGRPhotoTweakViewController, didFinishWithCroppedImage croppedImage: UIImage) {
+        frames[selectedFrame].image = croppedImage
+        resizeFrame(index: selectedFrame)
+    }
+    
+    func resizeFrame(index: Int) {
+        debugPrint("resizing frame")
+        let width = (frames[index].image)!.size.width
+        let height = (frames[index].image)!.size.height
+        debugPrint(width)
+        debugPrint(height)
+        let ratio = width / height
+        let originalWidth = frames[selectedFrame].bounds.width
+        let originalHeight = frames[selectedFrame].bounds.height
+        debugPrint(originalWidth)
+        debugPrint(originalHeight)
+        let max = originalWidth > originalHeight ? originalWidth : originalHeight
+        
+        if ratio > 1 {
+            frames[selectedFrame].bounds.size.width = max
+            frames[selectedFrame].bounds.size.height = max / ratio
+        } else {
+            frames[selectedFrame].bounds.size.height = max
+            frames[selectedFrame].bounds.size.width = max * ratio
         }
     }
 }
 
+//extension MainViewController: 
 
