@@ -73,7 +73,7 @@ class InstagramManager: NSObject, UIDocumentInteractionControllerDelegate {
         return Singleton.instance
     }
     
-    func postImageToInstagramWithCaption(imageInstagram: UIImage, instagramCaption: String, view: UIView) {
+    func postImageToInstagramWithCaption(imageInstagram: UIImage, instagramCaption: String, view: UIView) -> UIDocumentInteractionController? {
         // called to post image with caption to the instagram application
         
         let instagramURL = NSURL(string: kInstagramURL)
@@ -99,10 +99,13 @@ class InstagramManager: NSObject, UIDocumentInteractionControllerDelegate {
             // adding caption for the image
             documentInteractionController.annotation = ["InstagramCaption": instagramCaption]
             documentInteractionController.presentOpenInMenu(from: rect, in: view, animated: true)
+//            documentInteractionController.de
+            return documentInteractionController
         } else {
             
             /// display some message about how it didn't work
             /// Like: UIAlertController(title: kAlertViewTitle, message: kAlertViewMessage, preferredStyle: .alert)
+            return nil
         }
     }
 }

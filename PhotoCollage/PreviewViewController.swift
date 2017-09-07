@@ -117,6 +117,9 @@ class PreviewViewController: BaseViewController {
         twtView.addGestureRecognizer(twtGesture)
         let emailGesture = UITapGestureRecognizer(target: self, action: #selector(emailHandler))
         mailView.addGestureRecognizer(emailGesture)
+        
+        let whatsGesture = UITapGestureRecognizer(target: self, action: #selector(waHandler))
+        waView.addGestureRecognizer(whatsGesture)
 
         view.addSubview(fbView)
         view.addSubview(twtView)
@@ -191,25 +194,34 @@ class PreviewViewController: BaseViewController {
     }
 
     func insHandler() {
-        InstagramManager.sharedManager.postImageToInstagramWithCaption(imageInstagram: image!, instagramCaption: "test", view: self.view)
+//        if let vc = SLComposeViewController(forServiceType:SLServiceTypeInstagram) {
+//            vc.add(image!)
+//            vc.add(URL(string: "http://www.example.com/"))
+//            vc.setInitialText("#thestateoffun moments")
+//            self.present(vc, animated: true, completion: nil)
+//        }
+        let vc = InstagramManager.sharedManager.postImageToInstagramWithCaption(imageInstagram: image!, instagramCaption: "test", view: self.view)
+//        vc?.delegate = self
     }
     
     func fbHandler() {
         if let vc = SLComposeViewController(forServiceType:SLServiceTypeFacebook) {
             vc.add(image!)
-            vc.add(URL(string: "http://www.example.com/"))
+//            vc.add(URL(string: "http://www.example.com/"))
             vc.setInitialText("#thestateoffun moments")
             self.present(vc, animated: true, completion: nil)
         }
     }
+    
     func twtHandler() {
         if let vc = SLComposeViewController(forServiceType:SLServiceTypeTwitter) {
             vc.add(image!)
-            vc.add(URL(string: "http://www.example.com/"))
+//            vc.add(URL(string: "http://www.example.com/"))
             vc.setInitialText("#thestateoffun moments")
             self.present(vc, animated: true, completion: nil)
         }
     }
+    
     func emailHandler() {
         if( MFMailComposeViewController.canSendMail() ) {
             
@@ -224,7 +236,17 @@ class PreviewViewController: BaseViewController {
             self.present(mailComposer, animated: true, completion: nil)
         }
     }
+    
+    func waHandler() {
+//        var shareText: String = "#thestateoffun moments"
+        let image: UIImage = self.image!
+        let arrayObject: [Any] = [image]
+        let vc = UIActivityViewController(activityItems: arrayObject, applicationActivities: nil)
+        
+        self.present(vc, animated: true, completion: nil)
+    }
 }
+
 
 extension PreviewViewController: MFMailComposeViewControllerDelegate {
 //    func dids
@@ -233,3 +255,13 @@ extension PreviewViewController: MFMailComposeViewControllerDelegate {
         _ = controller.dismiss(animated: true, completion: nil)
     }
 }
+
+//extension PreviewViewController: UIDocumentInteractionControllerDelegate {
+//    func documentInteractionController(_ controller: UIDocumentInteractionController, didEndSendingToApplication application: String?) {
+//        debugPrint(application)
+//        debugPrint("didEnd")
+//    }
+//    func documen
+//}
+
+//extension PreviewViewController: SLComposeViewControllerde
