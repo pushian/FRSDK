@@ -200,8 +200,14 @@ class PreviewViewController: BaseViewController {
 //            vc.setInitialText("#thestateoffun moments")
 //            self.present(vc, animated: true, completion: nil)
 //        }
-        let vc = InstagramManager.sharedManager.postImageToInstagramWithCaption(imageInstagram: image!, instagramCaption: "test", view: self.view)
+//        let vc = InstagramManager.sharedManager.postImageToInstagramWithCaption(imageInstagram: image!, instagramCaption: "test", view: self.view)
 //        vc?.delegate = self
+        let image: UIImage = self.image!
+        let arrayObject: [Any] = [image]
+        let vc = UIActivityViewController(activityItems: arrayObject, applicationActivities: nil)
+        
+        self.present(vc, animated: true, completion: nil)
+
     }
     
     func fbHandler() {
