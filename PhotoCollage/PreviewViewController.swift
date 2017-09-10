@@ -246,8 +246,12 @@ class PreviewViewController: BaseViewController {
             debugPrint(self.processedFail)
             debugPrint(self.processedSuccess)
             while self.processedFail + self.processedSuccess != self.processCount {
+                debugPrint("i am inside")
+                debugPrint(self.processedSuccess)
             }
             debugPrint("after the while")
+            debugPrint(self.processedFail)
+            debugPrint(self.processedSuccess)
             SVProgressHUD.dismiss()
             _ = self.dismiss(animated: true, completion: nil)
             
