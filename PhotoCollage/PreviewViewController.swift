@@ -242,6 +242,9 @@ class PreviewViewController: BaseViewController {
         }
         DispatchQueue.global(qos: .background).async {
             debugPrint("before the while")
+            debugPrint(self.processCount)
+            debugPrint(self.processedFail)
+            debugPrint(self.processedSuccess)
             while self.processedFail + self.processedSuccess != self.processCount {
             }
             debugPrint("after the while")
