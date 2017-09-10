@@ -8,15 +8,19 @@
 
 import UIKit
 import SnapKit
+import CoreLocation
+
 public protocol FRPhotoCollageCreateDelegate: class {
-    func didTapCancel()
-    func didTapDone()
+    func FRDidTapCancel()
+    func FRDidTapDone()
 }
 
 public class FRPhotoCollageCreate: UIViewController {
 
     public weak var delegate: FRPhotoCollageCreateDelegate?
     
+    fileprivate let locationManager = CLLocationManager()
+    fileprivate var userId = ""
     fileprivate var titleLabel: UILabel! = {
         let t = UILabel()
         t.font = UIFont.DefaultSemiBoldWithSize(size: Scale.scaleY(y: 14))
@@ -63,11 +67,22 @@ public class FRPhotoCollageCreate: UIViewController {
         return t
     }()
     
+    init(uniqueId: String) {
+        super.init(nibName: nil, bundle: nil)
+        self.userId = uniqueId
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override public func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         
+        locationManager.delegate = self
+
         let backButton = UIBarButtonItem()
         backButton.title = ""
         navigationItem.backBarButtonItem = backButton
@@ -89,6 +104,8 @@ public class FRPhotoCollageCreate: UIViewController {
         setConstraints()
         flipBtn()
         checkBundle()
+        
+        checkLocation()
     }
 
     override public func didReceiveMemoryWarning() {
@@ -110,6 +127,20 @@ public class FRPhotoCollageCreate: UIViewController {
         okBtn.titleLabel?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
         okBtn.imageView?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
     }
+    
+    func checkLocation() {
+        if CLLocationManager.locationServicesEnabled() {
+            switch(CLLocationManager.authorizationStatus()) {
+            case .notDetermined:
+                locationManager.requestWhenInUseAuthorization()
+            case .restricted, .denied:
+                self.FRDisplayAlert(title: "Reminder", message: "The permission to access the location has been denied. Please update the permission in Settings to enable the Photo Collage feature", complete: nil)
+            case .authorizedAlways, .authorizedWhenInUse:
+                break
+            }
+        }
+    }
+    
     func setConstraints() {
         titleLabel.snp.makeConstraints { (make) in
             make.top.equalTo(Scale.scaleY(y: 29))
@@ -143,16 +174,17 @@ public class FRPhotoCollageCreate: UIViewController {
     }
     
     func cancelHandler() {
-//        self.dismiss(animated: t rue, completion: nil)
-        delegate?.didTapCancel()
+        delegate?.FRDidTapCancel()
+        self.dismiss(animated: true, completion: nil)
     }
     
     func okHandler() {
-        let vc = MainViewController()
+        let vc = MainViewController(uniqueId: userId)
         self.navigationController?.pushViewController(vc, animated: true)
     }
+    
     func previewDoneHandler() {
-        delegate?.didTapDone()
+        delegate?.FRDidTapDone()
     }
     
     func displayAlert(notification: Notification) {
@@ -176,3 +208,23 @@ public class FRPhotoCollageCreate: UIViewController {
         NotificationCenter.default.post(notification)
     }
 }
+
+extension FRPhotoCollageCreate: CLLocationManagerDelegate {
+    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = manager.location {
+            let locValue:CLLocationCoordinate2D = location.coordinate
+            debugPrint("locations = \(locValue.latitude) \(locValue.longitude)")
+        }
+    }
+    
+    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        debugPrint("is changed")
+        if status == .authorizedWhenInUse {
+            debugPrint("when in use")
+//            manager.startUpdatingLocation()
+        } else if status == .denied {
+            self.FRDisplayAlert(title: "Reminder", message: "The permission to access the location has been denied. Please update the permission in Settings to enable the Photo Collage feature", complete: nil)
+        }
+    }
+}
+

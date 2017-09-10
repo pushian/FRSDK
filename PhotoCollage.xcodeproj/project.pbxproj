@@ -115,6 +115,10 @@
 		85C51D741F4EAF4900700BEF /* UIImage-PC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C51D4D1F4CE34100700BEF /* UIImage-PC.swift */; };
 		85C51D751F4EAF4900700BEF /* UIViewController-PC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C51D521F4D1FFF00700BEF /* UIViewController-PC.swift */; };
 		85C51D761F4EAF4900700BEF /* UIImageView-PC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C51D541F4E7C3000700BEF /* UIImageView-PC.swift */; };
+		85DD044C1F62B12D005B36C1 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DD044B1F62B12D005B36C1 /* HTTPClient.swift */; };
+		85DD044D1F62F401005B36C1 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DD044B1F62B12D005B36C1 /* HTTPClient.swift */; };
+		85DD044F1F659AD1005B36C1 /* Date-PC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DD044E1F659AD1005B36C1 /* Date-PC.swift */; };
+		85DD04501F659AE0005B36C1 /* Date-PC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DD044E1F659AD1005B36C1 /* Date-PC.swift */; };
 		85E767601F5FA11F002880A0 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85C51D251F4A74B300700BEF /* Alamofire.framework */; };
 		85E767611F5FA11F002880A0 /* AlamofireImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85C51D261F4A74B300700BEF /* AlamofireImage.framework */; };
 		85E767631F5FA11F002880A0 /* PushianPhotoTweaks.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8530F81C1F5407710094EB49 /* PushianPhotoTweaks.framework */; };
@@ -221,6 +225,8 @@
 		85C51D5D1F4EAAB500700BEF /* FRPhotoCollageSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FRPhotoCollageSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		85C51D5F1F4EAAB500700BEF /* FRPhotoCollageSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FRPhotoCollageSDK.h; sourceTree = "<group>"; };
 		85C51D601F4EAAB500700BEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		85DD044B1F62B12D005B36C1 /* HTTPClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
+		85DD044E1F659AD1005B36C1 /* Date-PC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date-PC.swift"; sourceTree = "<group>"; };
 		85E767561F5D32A8002880A0 /* Async.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Async.framework; path = Carthage/Build/iOS/Async.framework; sourceTree = "<group>"; };
 		85E7675E1F5F9C68002880A0 /* FRPhotoCollageSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FRPhotoCollageSDK.framework; path = Carthage/Build/iOS/FRPhotoCollageSDK.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -429,6 +435,7 @@
 			isa = PBXGroup;
 			children = (
 				855DFBA01F54536E00684194 /* IGRPhotoTweaks */,
+				85DD044A1F62B0C4005B36C1 /* HTTP */,
 				855DFB931F541CEE00684194 /* Model */,
 				85C51D4F1F4CE3C600700BEF /* ViewController */,
 				85C51D481F4C829700700BEF /* Widget */,
@@ -447,6 +454,7 @@
 				85C51D521F4D1FFF00700BEF /* UIViewController-PC.swift */,
 				85C51D541F4E7C3000700BEF /* UIImageView-PC.swift */,
 				85A39D201F4EC51000BDDD9A /* NSObject-PC.swift */,
+				85DD044E1F659AD1005B36C1 /* Date-PC.swift */,
 			);
 			name = Extention;
 			sourceTree = "<group>";
@@ -488,6 +496,14 @@
 				85C51D601F4EAAB500700BEF /* Info.plist */,
 			);
 			path = FRPhotoCollageSDK;
+			sourceTree = "<group>";
+		};
+		85DD044A1F62B0C4005B36C1 /* HTTP */ = {
+			isa = PBXGroup;
+			children = (
+				85DD044B1F62B12D005B36C1 /* HTTPClient.swift */,
+			);
+			name = HTTP;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -640,6 +656,7 @@
 			files = (
 				855DFBEA1F54536E00684194 /* IGRPhotoContentView.swift in Sources */,
 				855DFBEB1F54536E00684194 /* IGRPhotoScrollView.swift in Sources */,
+				85DD044C1F62B12D005B36C1 /* HTTPClient.swift in Sources */,
 				855DFBE71F54536E00684194 /* IGRPhotoTweakView+Touch.swift in Sources */,
 				855DFBE11F54536E00684194 /* IGRPhotoTweakView+Angle.swift in Sources */,
 				855DFBE51F54536E00684194 /* IGRPhotoTweakView+Mask.swift in Sources */,
@@ -683,6 +700,7 @@
 				855DFBDF1F54536E00684194 /* IGRCropLine.swift in Sources */,
 				85C51D351F4ACB4E00700BEF /* LandingPageViewController.swift in Sources */,
 				855DFBE21F54536E00684194 /* IGRPhotoTweakView+AspectRatio.swift in Sources */,
+				85DD044F1F659AD1005B36C1 /* Date-PC.swift in Sources */,
 				85C51D4E1F4CE34100700BEF /* UIImage-PC.swift in Sources */,
 				855DFBCD1F54536E00684194 /* CGPoint+IGRPhonoTweakExtension.swift in Sources */,
 				855DFBD71F54536E00684194 /* IGRCropView+AspectRatio.swift in Sources */,
@@ -698,6 +716,7 @@
 			files = (
 				855DFBEC1F5453F000684194 /* CGFloat+IGRPhonoTweakExtension.swift in Sources */,
 				855DFBED1F5453F000684194 /* CGImage+IGRPhonoTweakExtension.swift in Sources */,
+				85DD044D1F62F401005B36C1 /* HTTPClient.swift in Sources */,
 				855DFBEE1F5453F000684194 /* CGPoint+IGRPhonoTweakExtension.swift in Sources */,
 				855DFBEF1F5453F000684194 /* UIColor+IGRPhonoTweakExtension.swift in Sources */,
 				855DFBF01F5453F000684194 /* UIImage+IGRPhonoTweakExtension.swift in Sources */,
@@ -725,6 +744,7 @@
 				855DFC061F5453F000684194 /* IGRPhotoTweakView+IGRCropView.swift in Sources */,
 				855DFC071F5453F000684194 /* IGRPhotoTweakView+Mask.swift in Sources */,
 				855DFC081F5453F000684194 /* IGRPhotoTweakView+NSLayoutConstraint.swift in Sources */,
+				85DD04501F659AE0005B36C1 /* Date-PC.swift in Sources */,
 				855DFC091F5453F000684194 /* IGRPhotoTweakView+Touch.swift in Sources */,
 				855DFC0A1F5453F000684194 /* IGRPhotoTweakView+UIScrollView.swift in Sources */,
 				855DFC0B1F5453F000684194 /* IGRPhotoTweakView.swift in Sources */,

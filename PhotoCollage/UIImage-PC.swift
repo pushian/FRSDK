@@ -50,4 +50,16 @@ extension UIImage {
         
         return newImage
     }
+    
+    func resizeImage() -> UIImage {
+        let width = self.size.width
+        let height = self.size.height
+        debugPrint(width)
+        let radio = height / width
+        let newSize = CGSize(width: 1024, height: 1024 * radio)
+        let newImage = self.af_imageAspectScaled(toFill: newSize)
+//        var data = UIImageJPEGRepresentation(newImage, 1.0)
+        return newImage
+    }
+
 }

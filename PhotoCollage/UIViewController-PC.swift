@@ -21,3 +21,12 @@ extension UIViewController {
         return
     }
 }
+
+
+extension UIViewController: HttpClientDelegte {
+    func alertMessage(title: String, message: String) {
+        debugPrint("~~~~~~~~~~")
+        debugPrint(message)
+        FRDisplayAlert(title: title, message: message, complete: nil)
+    }
+}

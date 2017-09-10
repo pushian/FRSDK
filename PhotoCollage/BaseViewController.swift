@@ -58,6 +58,8 @@ class BaseViewController: UIViewController {
         
         // Do any additional setup after loading the view.
         view.backgroundColor = .white
+        HttpClient.sharedInstance.delegate = self
+
         view.addSubview(navView)
         navView.addSubview(leftBtn)
         navView.addSubview(titleLabel)

@@ -9,23 +9,43 @@
 import UIKit
 import PushianPhotoTweaks
 import Photos
-import CoreLocation
 import SVProgressHUD
 //import Async
 import CoreImage
-
+import CoreLocation
 
 class MainViewController: BaseViewController {
 
     //    fileprivate var
 //    fileprivate var actionSheet
+    fileprivate var userId = ""
+    fileprivate let locationManager = CLLocationManager()
+    fileprivate var currentLat: String?
+    fileprivate var currentLon: String?
+    
+    fileprivate var images: [UIImage?] = [nil, nil, nil, nil, nil]
+    fileprivate var lats: [String?] = [nil, nil, nil, nil, nil]
+    fileprivate var lons: [String?] = [nil, nil, nil, nil, nil]
+    
     fileprivate var totalCount = 0
     fileprivate var count = 0
     fileprivate var validImages = [UIImage]()
+    fileprivate var validLats = [String?]()
+    fileprivate var validLons = [String?]()
+    
     fileprivate var mostFaces: UIImage?
     fileprivate var oneFace = [UIImage]()
     fileprivate var moreFace = [UIImage]()
     fileprivate var noFace = [UIImage]()
+    
+    fileprivate var mostFaceLat: String?
+    fileprivate var mostFaceLon: String?
+    fileprivate var noFaceLat = [String?]()
+    fileprivate var noFaceLon = [String?]()
+    fileprivate var oneFaceLat = [String?]()
+    fileprivate var oneFaceLon = [String?]()
+    fileprivate var moreFaceLat = [String?]()
+    fileprivate var moreFaceLon = [String?]()
     
     fileprivate var didLoad = false
     fileprivate var selectedIndex = 0
@@ -75,17 +95,31 @@ class MainViewController: BaseViewController {
     fileprivate var widths = [106, 92, 60, 118, 166]
     fileprivate var heights = [147, 128, 95, 139, 120]
 //    fileprivate var xs = []
+    
+    
+    init(uniqueId: String) {
+        super.init(nibName: nil, bundle: nil)
+        self.userId = uniqueId
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.startUpdatingLocation()
+
         debugPrint(self.navigationItem.leftBarButtonItem)
         debugPrint(self.navigationItem.backBarButtonItem?.isEnabled)
         self.navigationItem.backBarButtonItem?.isEnabled = false
         debugPrint(self.navigationItem.backBarButtonItem?.isEnabled)
-        self.navigationItem.title = "Photo Collage"
-        let preBtn = UIBarButtonItem(title: "Preview", style: .plain, target: self, action: #selector(previewHandler))
-        self.navigationItem.rightBarButtonItem = preBtn
+
         view.addSubview(infoLabel)
         view.addSubview(bkView)
         bkView.addSubview(overLay)
@@ -103,12 +137,11 @@ class MainViewController: BaseViewController {
         
         setRightBtn(title: "Preview")
         setTitle(title: "Photo Collage")
-        
+       
+
         if !didLoad {
             checkStatus()
         }
-//        processPhoto()
-//        setupFrames()
     }
     
     
@@ -117,11 +150,16 @@ class MainViewController: BaseViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        if self.isMovingFromParentViewController {
-            FRDisplayAlert(title: "test", message: "test", complete: nil)
-        }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        debugPrint("i am going to start")
+        locationManager.startUpdatingLocation()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        debugPrint("i am going to stop")
+        locationManager.stopUpdatingLocation()
     }
     
 //    override func viewDidLayoutSubviews() {
@@ -132,32 +170,6 @@ class MainViewController: BaseViewController {
 //            }
 //        }
 //    }
-    
-    func processPhoto() {
-        SVProgressHUD.show()
-//        DispatchQueue.backg
-        DispatchQueue.global(qos: .background).async {
-            while self.count != self.totalCount {
-                debugPrint(self.count)
-            }
-            SVProgressHUD.dismiss()
-            DispatchQueue.main.async {
-                self.setupFrames()
-                
-            }
-        }
-//        Async.background {
-//            while self.count != self.totalCount {
-//                debugPrint(self.count)
-//            }
-//            SVProgressHUD.dismiss()
-//            Async.main{
-//                self.setupFrames()
-//
-//            }
-//        }
-        debugPrint(validImages.count)
-    }
     
     func setConstraints() {
         infoLabel.snp.makeConstraints { (make) in
@@ -200,18 +212,20 @@ class MainViewController: BaseViewController {
             
         else if (status == PHAuthorizationStatus.denied) {
             // Access has been denied.
-            debugPrint("Access has been denied.")
-            let alertController = UIAlertController(title: "Reminder", message: "The permission to access the camera roll has been denied. You may change the permission to enable the Photo Collage feature", preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "Change Permission", style: .default, handler: { (action) in
-                self.settingHandler()
-            }))
-            alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-            self.present(alertController, animated: true, completion: nil)
+            self.FRDisplayAlert(title: "Reminder", message: "The permission to access the camera roll has been denied. Please update the permission in Settings to enable the Photo Collage feature", complete: nil)
+//            debugPrint("Access has been denied.")
+//            let alertController = UIAlertController(title: "Reminder", message: "The permission to access the camera roll has been denied. You may change the permission to enable the Photo Collage feature", preferredStyle: .alert)
+//            alertController.addAction(UIAlertAction(title: "Change Permission", style: .default, handler: { (action) in
+//                self.settingHandler()
+//            }))
+//            alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+//            self.present(alertController, animated: true, completion: nil)
         }
             
         else if (status == PHAuthorizationStatus.notDetermined) {
             
             // Access has not been determined.
+//            PHPhotoLibrary.reque
             PHPhotoLibrary.requestAuthorization({ (newStatus) in
                 
                 if (newStatus == PHAuthorizationStatus.authorized) {
@@ -224,14 +238,15 @@ class MainViewController: BaseViewController {
                 }
                     
                 else {
-                    debugPrint("has not been granted")
-                    let alertController = UIAlertController(title: "Reminder", message: "The permission to access the camera roll has been denied. You may change the permission to enable the Photo Collage feature", preferredStyle: .alert)
-                    alertController.addAction(UIAlertAction(title: "Change Permission", style: .default, handler: { (action) in
-                        //                self.ignoreBudget = true
-                        self.settingHandler()
-                    }))
-                    alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-                    self.present(alertController, animated: true, completion: nil)
+                    self.FRDisplayAlert(title: "Reminder", message: "The permission to access the camera roll has been denied. Please update the permission in Settings to enable the Photo Collage feature", complete: nil)
+//                    debugPrint("has not been granted")
+//                    let alertController = UIAlertController(title: "Reminder", message: "The permission to access the camera roll has been denied. You may change the permission to enable the Photo Collage feature", preferredStyle: .alert)
+//                    alertController.addAction(UIAlertAction(title: "Change Permission", style: .default, handler: { (action) in
+//                        //                self.ignoreBudget = true
+//                        self.settingHandler()
+//                    }))
+//                    alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+//                    self.present(alertController, animated: true, completion: nil)
                 }
             })
         }
@@ -241,6 +256,8 @@ class MainViewController: BaseViewController {
             debugPrint("Restricted access")
         }
     }
+    
+    
     
     func getPhoto() {
         let fetchOptions = PHFetchOptions()
@@ -257,8 +274,17 @@ class MainViewController: BaseViewController {
         
         //
         let fromRange = IndexSet(0...fetchResult.count - 1)
-        let lastest100 = fetchResult.objects(at: fromRange)
-        let valid = lastest100.filter { (asset) -> Bool in
+        let latest = fetchResult.objects(at: fromRange)
+        let valid = latest.filter { (asset) -> Bool in
+            if let date = asset.creationDate {
+                let day = date.daysBetweenDate(toDate: Date())
+                if day > 2 {
+                    return false
+                }
+                debugPrint("===========")
+                debugPrint(date.daysBetweenDate(toDate: Date()))
+                
+            }
             if let location = asset.location?.coordinate {
                 for each in Constants.sentosaRegions {
                     if each.contains(location) {
@@ -299,10 +325,13 @@ class MainViewController: BaseViewController {
                     height = theMax
                     width = theMax * ratio
                 }
-                debugPrint("========")
-                debugPrint(width)
-                debugPrint(ass.pixelWidth)
+                
                 let targetSize = CGSize(width: width, height: height)
+                
+                let lat = ass.location?.coordinate.latitude
+                let lon = ass.location?.coordinate.longitude
+                validLats.append(String(lat!))
+                validLons.append(String(lon!))
                 
                 manager.requestImage(for: ass,
                                      targetSize: targetSize,
@@ -310,8 +339,6 @@ class MainViewController: BaseViewController {
                                      options: requestOptions,
                                      resultHandler: { image, info in
                                         self.count = self.count + 1
-                                        debugPrint("handle request")
-                                        debugPrint(self.count)
                                         if let image = image {
                                             self.validImages.append(image)
                                         }
@@ -326,30 +353,31 @@ class MainViewController: BaseViewController {
         let detector = CIDetector(ofType: CIDetectorTypeFace, context: nil, options: [CIDetectorAccuracy: CIDetectorAccuracyHigh])
         var tmpCount = 0
         var max: Int? = 0
-        for each in self.validImages {
+        for (face, (lat, lon)) in zip(self.validImages, zip(self.validLats, self.validLons)){
             tmpCount = tmpCount + 1
-            let ciImage = CIImage(image: each)
+            let ciImage = CIImage(image: face)
 //            let accuracy = cide
             let foundFaces = detector?.features(in: ciImage!)
             if let count = foundFaces?.count {
                 if count > max! {
-                    self.mostFaces = each
+                    self.mostFaces = face
+                    self.mostFaceLat = lat
+                    self.mostFaceLon = lon
                     max = foundFaces?.count
                 } else if count == 0 {
-                    self.noFace.append(each)
+                    self.noFace.append(face)
+                    self.noFaceLat.append(lat)
+                    self.noFaceLon.append(lon)
                 } else if count == 1 {
-                    self.oneFace.append(each)
+                    self.oneFace.append(face)
+                    self.oneFaceLat.append(lat)
+                    self.oneFaceLon.append(lon)
                 } else {
-                    self.moreFace.append(each)
+                    self.moreFace.append(face)
+                    self.moreFaceLat.append(lat)
+                    self.moreFaceLon.append(lon)
                 }
             }
-//            if (foundFaces?.count)! > max! {
-//                self.mostFaces = each
-//                max = foundFaces?.count
-//            } else if ()!
-//            detector.
-            debugPrint(tmpCount)
-            debugPrint(foundFaces?.count)
         }
         
         self.validImages = [UIImage]()
@@ -548,40 +576,112 @@ class MainViewController: BaseViewController {
         }
         frames[4].noImage()
         
-        for each in 0..<frames.count - 1 {
-            if each < noFace.count - 1 {
-                frames[each].image = noFace[each]
-                frames[each].gotImage()
+        var index = 0
+        if !applyNoFace(index: index) {
+            if !applyOneFace(index: index) {
+                if !applyMoreFace(index: index) {
+                    if !applyMostFace(index: index) {
+                        
+                    }
+                }
             }
         }
-        for each in 1..<frames.count - 1 {
-            if each < oneFace.count - 1 {
-                frames[each].image = oneFace[each]
-                frames[each].gotImage()
+        index = 1
+        if !applyOneFace(index: index) {
+            if !applyMoreFace(index: index) {
+                if !applyMostFace(index: index) {
+                    if !applyNoFace(index: index) {
+                        
+                    }
+                }
             }
         }
-        for each in 2..<frames.count - 1 {
-            if each < moreFace.count - 1 {
-                frames[each].image = moreFace[each]
-                frames[each].gotImage()
+        index = 2
+        if !applyMoreFace(index: index) {
+            if !applyMostFace(index: index) {
+                if !applyOneFace(index: index) {
+                    if !applyNoFace(index: index) {
+                        
+                    }
+                }
             }
         }
-        if let image = mostFaces {
-            frames[3].image = image
-            frames[3].gotImage()
+        index = 3
+        if !applyMostFace(index: index) {
+            if !applyMoreFace(index: index) {
+                if !applyOneFace(index: index) {
+                    if !applyNoFace(index: index) {
+                        
+                    }
+                }
+            }
         }
+        
     }
     
-    func previewHandler() {
-        for each in frames {
-            if each.image == nil {
-                FRDisplayAlert(title: "Reminder", message: "Please ensure there is no empty frame!", complete: nil)
-                return
-            }
+    func applyNoFace(index: Int) -> Bool {
+        let frame = frames[index]
+        if noFace.isEmpty {
+            return false
         }
-        let image = UIImage(view: bkView)
-        let vc = PreviewViewController(image: image)
-        self.navigationController?.pushViewController(vc, animated: true)
+        let randomIndex = Int(arc4random_uniform(UInt32(noFace.count)))
+        let image = noFace[randomIndex]
+        frame.image = image
+        frame.gotImage()
+        images[index] = image
+        lats[index] = noFaceLat[randomIndex]
+        lons[index] = noFaceLon[randomIndex]
+        noFace.remove(at: randomIndex)
+        return true
+
+    }
+    
+    func applyOneFace(index: Int) -> Bool {
+        let frame = frames[index]
+        if oneFace.isEmpty {
+            return false
+        }
+        let randomIndex = Int(arc4random_uniform(UInt32(oneFace.count)))
+        let image = oneFace[randomIndex]
+        frame.image = image
+        frame.gotImage()
+        images[index] = image
+        lats[index] = oneFaceLat[randomIndex]
+        lons[index] = oneFaceLon[randomIndex]
+        oneFace.remove(at: randomIndex)
+        return true
+    }
+    
+    func applyMoreFace(index: Int) -> Bool {
+        let frame = frames[index]
+        
+        if moreFace.isEmpty {
+            return false
+        }
+        let randomIndex = Int(arc4random_uniform(UInt32(moreFace.count)))
+        let image = moreFace[randomIndex]
+        frame.image = image
+        frame.gotImage()
+        images[index] = image
+        lats[index] = moreFaceLat[randomIndex]
+        lons[index] = moreFaceLon[randomIndex]
+        moreFace.remove(at: randomIndex)
+        return true
+    }
+    
+    func applyMostFace(index: Int) -> Bool {
+        let frame = frames[index]
+
+        if mostFaces == nil {
+            return false
+        }
+        frame.image = mostFaces!
+        frame.gotImage()
+        images[index] = mostFaces
+        lats[index] = mostFaceLat
+        lons[index] = mostFaceLat
+        mostFaces = nil
+        return true
     }
     
     override func rightHandler() {
@@ -593,7 +693,7 @@ class MainViewController: BaseViewController {
             }
         }
         let image = UIImage(view: bkView)
-        let vc = PreviewViewController(image: image)
+        let vc = PreviewViewController(image: image, images: images, userId: userId, lats: lats, lons: lons)
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -808,21 +908,64 @@ extension MainViewController: UIActionSheetDelegate {
 
 extension MainViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            self.frames[selectedFrame].image = image
-            self.frames[selectedFrame].gotImage()
-            dismiss(animated: true, completion: nil)
-            let vc = IGRPhotoTweakViewController()
-            vc.image = self.frames[selectedFrame].image
-            vc.delegate = self
-            let nav = UINavigationController(rootViewController: vc)
-            nav.navigationBar.isHidden = true
-            self.present(nav, animated: true, completion: nil)
-//            
-//            debugPrint("i got you")
-//            frames[selectedFrame].image = image
-//            frames[selectedFrame].gotImage()
+        debugPrint("didFinish")
+        if picker.sourceType == .photoLibrary {
+            debugPrint("i am using photos")
+            if let URL = info[UIImagePickerControllerReferenceURL] as? URL {
+                debugPrint("got url")
+                let opts = PHFetchOptions()
+                opts.fetchLimit = 1
+                let assets = PHAsset.fetchAssets(withALAssetURLs: [URL], options: opts)
+                let asset = assets[0]
+                // The location is "asset.location", as a CLLocation
+                debugPrint()
+                debugPrint(asset.location?.coordinate.longitude)
+                if let location = asset.location {
+                    let lat = String(location.coordinate.latitude)
+                    lats[selectedFrame] = lat
+                    let lon = String(location.coordinate.longitude)
+                    lons[selectedFrame] = lon
+                }
+                // ... Other stuff like dismiss omitted
+            }
+            
+            if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
+                self.frames[selectedFrame].image = image
+                self.images[selectedFrame] = image
+                self.frames[selectedFrame].gotImage()
+//                dismiss(animated: true, completion: nil)
+                dismiss(animated: true, completion: { 
+                    
+                    let vc = IGRPhotoTweakViewController()
+                    vc.image = self.frames[self.selectedFrame].image
+                    vc.delegate = self
+                    let nav = UINavigationController(rootViewController: vc)
+                    nav.navigationBar.isHidden = true
+                    self.present(nav, animated: true, completion: nil)
+                })
+            }
+        } else {
+            debugPrint("i am using camera")
+            if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
+                self.frames[selectedFrame].image = image
+                self.images[selectedFrame] = image
+                lats[selectedFrame] = currentLat
+                lons[selectedFrame] = currentLon
+                self.frames[selectedFrame].gotImage()
+                dismiss(animated: true, completion: nil)
+                dismiss(animated: true, completion: {
+                    let vc = IGRPhotoTweakViewController()
+                    vc.image = self.frames[self.selectedFrame].image
+                    vc.delegate = self
+                    let nav = UINavigationController(rootViewController: vc)
+                    nav.navigationBar.isHidden = true
+                    self.present(nav, animated: true, completion: nil)
+                })
+            }
         }
+       
+        
+        
     }
 }
 extension MainViewController: UIGestureRecognizerDelegate {
@@ -831,11 +974,11 @@ extension MainViewController: UIGestureRecognizerDelegate {
     }
 }
 
-extension MainViewController: EditPhotoViewControllerDelegate {
-    func didEndEdit(image: UIImage) {
-        frames[selectedFrame].image = image
-    }
-}
+//extension MainViewController: EditPhotoViewControllerDelegate {
+//    func didEndEdit(image: UIImage) {
+//        frames[selectedFrame].image = image
+//    }
+//}
 
 extension MainViewController: IGRPhotoTweakViewControllerDelegate {
     /**
@@ -846,6 +989,7 @@ extension MainViewController: IGRPhotoTweakViewControllerDelegate {
 
     func photoTweaksController(_ controller: IGRPhotoTweakViewController, didFinishWithCroppedImage croppedImage: UIImage) {
         frames[selectedFrame].image = croppedImage
+        self.images[selectedFrame] = croppedImage
         resizeFrame(index: selectedFrame)
     }
     
@@ -873,4 +1017,23 @@ extension MainViewController: IGRPhotoTweakViewControllerDelegate {
 }
 
 //extension MainViewController: 
+
+extension MainViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = manager.location {
+            let locValue:CLLocationCoordinate2D = location.coordinate
+            debugPrint("locations = \(locValue.latitude) \(locValue.longitude)")
+            currentLat = String(locValue.latitude)
+            currentLon = String(locValue.longitude)
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        debugPrint("is changed")
+        if status == .authorizedWhenInUse {
+            debugPrint("when in use")
+            manager.startUpdatingLocation()
+        }
+    }
+}
 
