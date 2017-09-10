@@ -952,7 +952,6 @@ extension MainViewController: UIImagePickerControllerDelegate, UINavigationContr
                 lats[selectedFrame] = currentLat
                 lons[selectedFrame] = currentLon
                 self.frames[selectedFrame].gotImage()
-                dismiss(animated: true, completion: nil)
                 dismiss(animated: true, completion: {
                     let vc = IGRPhotoTweakViewController()
                     vc.image = self.frames[self.selectedFrame].image
