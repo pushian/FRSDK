@@ -67,7 +67,7 @@ public class FRPhotoCollageCreate: UIViewController {
         return t
     }()
     
-    init(uniqueId: String) {
+    public init(uniqueId: String) {
         super.init(nibName: nil, bundle: nil)
         self.userId = uniqueId
     }
