@@ -679,7 +679,7 @@ class MainViewController: BaseViewController {
         frame.gotImage()
         images[index] = mostFaces
         lats[index] = mostFaceLat
-        lons[index] = mostFaceLat
+        lons[index] = mostFaceLon
         mostFaces = nil
         return true
     }
