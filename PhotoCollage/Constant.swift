@@ -27,8 +27,9 @@ struct Constants {
     static let regionTwo = CLCircularRegion(center: CLLocationCoordinate2D.init(latitude: 1.246506, longitude: 103.842322), radius: 1000, identifier: "regionTwo")
     static let regionThree = CLCircularRegion(center: CLLocationCoordinate2D.init(latitude: 1.254076, longitude: 103.820066), radius: 1000, identifier: "regionThree")
     static let regionFour = CLCircularRegion(center: CLLocationCoordinate2D.init(latitude: 1.257684, longitude: 103.811023), radius: 700, identifier: "regionFour")
+    static let regionFive = CLCircularRegion(center: CLLocationCoordinate2D.init(latitude: 1.298013, longitude: 103.786080), radius: 700, identifier: "regionFive")
 
-    static let sentosaRegions = [regionOne, regionTwo, regionThree, regionFour]
+    static let sentosaRegions = [regionOne, regionTwo, regionThree, regionFour, regionFive]
     
     static let imageLoadTime: Double = 0.3
     

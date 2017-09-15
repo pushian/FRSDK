@@ -22,6 +22,7 @@ class MainViewController: BaseViewController {
     fileprivate let locationManager = CLLocationManager()
     fileprivate var currentLat: String?
     fileprivate var currentLon: String?
+    fileprivate var currentLocation: CLLocation?
     
     fileprivate var images: [UIImage?] = [nil, nil, nil, nil, nil]
     fileprivate var lats: [String?] = [nil, nil, nil, nil, nil]
@@ -129,6 +130,7 @@ class MainViewController: BaseViewController {
         collectionView.dataSource = self
 //        self.post
         setConstraints()
+        self.setupFrames()
 //        getPhoto()
 //        getPhoto { (image) in
 //            if let image = image {
@@ -193,7 +195,6 @@ class MainViewController: BaseViewController {
             make.top.equalTo(bkView.snp.bottom)
         }
     }
-    
     
     func checkStatus() {
         // Get the current authorization state.
@@ -281,9 +282,6 @@ class MainViewController: BaseViewController {
                 if day > 2 {
                     return false
                 }
-                debugPrint("===========")
-                debugPrint(date.daysBetweenDate(toDate: Date()))
-                
             }
             if let location = asset.location?.coordinate {
                 for each in Constants.sentosaRegions {
@@ -358,12 +356,14 @@ class MainViewController: BaseViewController {
             let ciImage = CIImage(image: face)
 //            let accuracy = cide
             let foundFaces = detector?.features(in: ciImage!)
+            debugPrint("found faces: \(foundFaces?.count)")
             if let count = foundFaces?.count {
                 if count > max! {
                     self.mostFaces = face
                     self.mostFaceLat = lat
                     self.mostFaceLon = lon
                     max = foundFaces?.count
+                    debugPrint("updated max is \(max)")
                 } else if count == 0 {
                     self.noFace.append(face)
                     self.noFaceLat.append(lat)
@@ -379,13 +379,17 @@ class MainViewController: BaseViewController {
                 }
             }
         }
+        debugPrint("data collection")
+        debugPrint(noFace.count)
+        debugPrint(oneFace.count)
+        debugPrint(moreFace.count)
+        debugPrint(mostFaces)
         
         self.validImages = [UIImage]()
         SVProgressHUD.dismiss()
 //        Async.main{
         DispatchQueue.main.async {
-
-            self.setupFrames()
+            self.updateFrames()
         }
         
     }
@@ -575,7 +579,9 @@ class MainViewController: BaseViewController {
             each.noImage(withLabelOne: false)
         }
         frames[4].noImage()
-        
+    }
+    
+    func updateFrames() {
         var index = 0
         if !applyNoFace(index: index) {
             if !applyOneFace(index: index) {
@@ -616,9 +622,7 @@ class MainViewController: BaseViewController {
                 }
             }
         }
-        
     }
-    
     func applyNoFace(index: Int) -> Bool {
         let frame = frames[index]
         if noFace.isEmpty {
@@ -628,6 +632,7 @@ class MainViewController: BaseViewController {
         let image = noFace[randomIndex]
         frame.image = image
         frame.gotImage()
+        resizeFrame(index: index)
         images[index] = image
         lats[index] = noFaceLat[randomIndex]
         lons[index] = noFaceLon[randomIndex]
@@ -645,6 +650,7 @@ class MainViewController: BaseViewController {
         let image = oneFace[randomIndex]
         frame.image = image
         frame.gotImage()
+        resizeFrame(index: index)
         images[index] = image
         lats[index] = oneFaceLat[randomIndex]
         lons[index] = oneFaceLon[randomIndex]
@@ -662,6 +668,7 @@ class MainViewController: BaseViewController {
         let image = moreFace[randomIndex]
         frame.image = image
         frame.gotImage()
+        resizeFrame(index: index)
         images[index] = image
         lats[index] = moreFaceLat[randomIndex]
         lons[index] = moreFaceLon[randomIndex]
@@ -677,6 +684,7 @@ class MainViewController: BaseViewController {
         }
         frame.image = mostFaces!
         frame.gotImage()
+        resizeFrame(index: index)
         images[index] = mostFaces
         lats[index] = mostFaceLat
         lons[index] = mostFaceLon
@@ -770,6 +778,19 @@ class MainViewController: BaseViewController {
         }
     }
     
+    func addAsset(image: UIImage, location: CLLocation? = nil) {
+        PHPhotoLibrary.shared().performChanges({
+            // Request creating an asset from the image.
+            let creationRequest = PHAssetChangeRequest.creationRequestForAsset(from: image)
+            // Set metadata location
+            if let location = location {
+                creationRequest.location = location
+            }
+        }, completionHandler: { success, error in
+            if !success { NSLog("error creating asset: \(error)") }
+        })
+    }
+
 }
 
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -951,6 +972,7 @@ extension MainViewController: UIImagePickerControllerDelegate, UINavigationContr
                 self.images[selectedFrame] = image
                 lats[selectedFrame] = currentLat
                 lons[selectedFrame] = currentLon
+                addAsset(image: image, location: currentLocation)
                 self.frames[selectedFrame].gotImage()
                 dismiss(animated: true, completion: {
                     let vc = IGRPhotoTweakViewController()
@@ -994,23 +1016,25 @@ extension MainViewController: IGRPhotoTweakViewControllerDelegate {
     
     func resizeFrame(index: Int) {
         debugPrint("resizing frame")
-        let width = (frames[index].image)!.size.width
-        let height = (frames[index].image)!.size.height
-        debugPrint(width)
-        debugPrint(height)
-        let ratio = width / height
-        let originalWidth = frames[selectedFrame].bounds.width
-        let originalHeight = frames[selectedFrame].bounds.height
-        debugPrint(originalWidth)
-        debugPrint(originalHeight)
-        let max = originalWidth > originalHeight ? originalWidth : originalHeight
-        
-        if ratio > 1 {
-            frames[selectedFrame].bounds.size.width = max
-            frames[selectedFrame].bounds.size.height = max / ratio
-        } else {
-            frames[selectedFrame].bounds.size.height = max
-            frames[selectedFrame].bounds.size.width = max * ratio
+        if let image = frames[index].image {
+            let width = image.size.width
+            let height = image.size.height
+            debugPrint(width)
+            debugPrint(height)
+            let ratio = width / height
+            let originalWidth = frames[index].bounds.width
+            let originalHeight = frames[index].bounds.height
+            debugPrint(originalWidth)
+            debugPrint(originalHeight)
+            let max = originalWidth > originalHeight ? originalWidth : originalHeight
+            //        if
+            if ratio > 1 {
+                frames[index].bounds.size.width = max
+                frames[index].bounds.size.height = max / ratio
+            } else {
+                frames[index].bounds.size.height = max
+                frames[index].bounds.size.width = max * ratio
+            }
         }
     }
 }
@@ -1024,6 +1048,7 @@ extension MainViewController: CLLocationManagerDelegate {
             debugPrint("locations = \(locValue.latitude) \(locValue.longitude)")
             currentLat = String(locValue.latitude)
             currentLon = String(locValue.longitude)
+            currentLocation = location
         }
     }
     

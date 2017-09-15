@@ -11,6 +11,7 @@ import Social
 import Messages
 import MessageUI
 import SVProgressHUD
+import Photos
 
 
 class PreviewViewController: BaseViewController {
@@ -143,8 +144,8 @@ class PreviewViewController: BaseViewController {
         view.addSubview(mailView)
         
         
-        setRightBtn(title: "Done")
-        setTitle(title: "Preview & Share")
+        setRightBtn(title: "Done & Save")
+        setTitle(title: "Preview")
         
         setConstraints()
     }
@@ -199,6 +200,18 @@ class PreviewViewController: BaseViewController {
         _ = self.navigationController?.popViewController(animated: true)
     }
 
+    func addAsset(image: UIImage, location: CLLocation? = nil) {
+        PHPhotoLibrary.shared().performChanges({
+            // Request creating an asset from the image.
+            let creationRequest = PHAssetChangeRequest.creationRequestForAsset(from: image)
+            // Set metadata location
+            if let location = location {
+                creationRequest.location = location
+            }
+        }, completionHandler: { success, error in
+            if !success { NSLog("error creating asset: \(error)") }
+        })
+    }
     
     func doneHandler() {
         
@@ -209,11 +222,15 @@ class PreviewViewController: BaseViewController {
 //        let notification = Notification(name: Constants.notifications.FRdidTapDone, object: nil, userInfo: nil)
 //        NotificationCenter.default.post(notification)
 //        SVProgressHUD.show()
+        
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
+//        addAsset(image: image, location: CLLocation(latitude: 1.298013, longitude: 103.786080))
         let collageId = "\(UIDevice.current.identifierForVendor!.uuidString)+\(NSDate().timeIntervalSince1970)+\(arc4random())"
 //        for (name,(age,gender)) in zip(names,zip(ages,genders)) {
         debugPrint(collageId)
         
-        SVProgressHUD.show()
+//        SVProgressHUD.show()
+        SVProgressHUD.show(withStatus: "Uploading the image...")
         processCount = 0
         processedSuccess = 0
         processedFail = 0
@@ -342,6 +359,19 @@ extension PreviewViewController: MFMailComposeViewControllerDelegate {
                                didFinishWith result: MFMailComposeResult, error: Error?) {
         shared.append("Email")
         _ = controller.dismiss(animated: true, completion: nil)
+    }
+    
+    func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            // we got back an error!
+            let ac = UIAlertController(title: "Save error", message: error.localizedDescription, preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default))
+            present(ac, animated: true)
+        } else {
+            let ac = UIAlertController(title: "Saved!", message: "Your image has been saved to your photos.", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default))
+            present(ac, animated: true)
+        }
     }
 }
 

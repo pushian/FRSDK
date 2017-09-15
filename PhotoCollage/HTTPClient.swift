@@ -71,6 +71,5 @@ class HttpClient: NSObject {
                 }//switch
         }
         )
-        
     }
 }
