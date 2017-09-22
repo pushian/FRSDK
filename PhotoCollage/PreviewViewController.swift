@@ -144,7 +144,7 @@ class PreviewViewController: BaseViewController {
         view.addSubview(mailView)
         
         
-        setRightBtn(title: "Done & Save")
+        setRightBtn(title: "Save and Done")
         setTitle(title: "Preview")
         
         setConstraints()
@@ -191,9 +191,14 @@ class PreviewViewController: BaseViewController {
     
     override func rightHandler() {
         super.rightHandler()
-        
-        debugPrint("right handler")
-        doneHandler()
+        let alertController = UIAlertController(title: "Reminder", message: "Sentosa will also receive the collage.", preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+            self.doneHandler()
+        }))
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action) in
+            UIImageWriteToSavedPhotosAlbum(self.image, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
+        }))
+        present(alertController, animated: true, completion: nil)
     }
     
     override func leftHandler() {
@@ -223,13 +228,17 @@ class PreviewViewController: BaseViewController {
 //        NotificationCenter.default.post(notification)
 //        SVProgressHUD.show()
         
+        let notification = Notification(name: Constants.notifications.FRdidTapDone, object: nil, userInfo: nil)
+        NotificationCenter.default.post(notification)
+        
         UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
+        
 //        addAsset(image: image, location: CLLocation(latitude: 1.298013, longitude: 103.786080))
         let collageId = "\(UIDevice.current.identifierForVendor!.uuidString)+\(NSDate().timeIntervalSince1970)+\(arc4random())"
 //        for (name,(age,gender)) in zip(names,zip(ages,genders)) {
         debugPrint(collageId)
         
-//        SVProgressHUD.show()
+        SVProgressHUD.show()
         SVProgressHUD.show(withStatus: "Uploading the image...")
         processCount = 0
         processedSuccess = 0
@@ -257,27 +266,27 @@ class PreviewViewController: BaseViewController {
                 })
             }
         }
-        DispatchQueue.global(qos: .background).async {
-            debugPrint("before the while")
-            debugPrint(self.processCount)
-            debugPrint(self.processedFail)
-            debugPrint(self.processedSuccess)
-            while self.processedFail + self.processedSuccess != self.processCount {
-                debugPrint("i am inside")
-                debugPrint(self.processedSuccess)
-            }
-            debugPrint("after the while")
-            debugPrint(self.processedFail)
-            debugPrint(self.processedSuccess)
-            SVProgressHUD.dismiss()
-            _ = self.dismiss(animated: true, completion: nil)
-            
-            let notification = Notification(name: Constants.notifications.FRdidTapDone, object: nil, userInfo: nil)
-            NotificationCenter.default.post(notification)
-//            if processedFail != 0 {
-//                self.FRDisplayAlert(title: "Error", message: "Server Error. Please try again later", complete: <#T##(() -> Void)?##(() -> Void)?##() -> Void#>)
+//        DispatchQueue.global(qos: .background).async {
+//            debugPrint("before the while")
+//            debugPrint(self.processCount)
+//            debugPrint(self.processedFail)
+//            debugPrint(self.processedSuccess)
+//            while self.processedFail + self.processedSuccess != self.processCount {
+//                debugPrint("i am inside")
+//                debugPrint(self.processedSuccess)
 //            }
-        }
+//            debugPrint("after the while")
+//            debugPrint(self.processedFail)
+//            debugPrint(self.processedSuccess)
+//            SVProgressHUD.dismiss()
+//            _ = self.dismiss(animated: true, completion: nil)
+//            
+        
+////            if processedFail != 0 {
+////                self.FRDisplayAlert(title: "Error", message: "Server Error. Please try again later", complete: <#T##(() -> Void)?##(() -> Void)?##() -> Void#>)
+////            }
+//        }
+
 
 //        HttpClient.sharedInstance.sendImage(image: (self.image)!, userId: "1234567", collageId: "1234567", shared: ["facebook", "twitter"], lat: "1.111", lon: "2.222") { (isSuccess) in
 //            debugPrint(isSuccess)
@@ -368,9 +377,10 @@ extension PreviewViewController: MFMailComposeViewControllerDelegate {
             ac.addAction(UIAlertAction(title: "OK", style: .default))
             present(ac, animated: true)
         } else {
-            let ac = UIAlertController(title: "Saved!", message: "Your image has been saved to your photos.", preferredStyle: .alert)
-            ac.addAction(UIAlertAction(title: "OK", style: .default))
-            present(ac, animated: true)
+            SVProgressHUD.showSuccess(withStatus: "Saved to album")
+//            SVProgressHUD.showSuccess(withStatus: <#T##String!#>)
+            _ = self.dismiss(animated: true, completion: nil)
+
         }
     }
 }

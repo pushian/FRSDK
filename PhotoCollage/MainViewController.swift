@@ -694,10 +694,12 @@ class MainViewController: BaseViewController {
     
     override func rightHandler() {
         super.rightHandler()
-        for each in frames {
-            if each.image == nil {
-                FRDisplayAlert(title: "Reminder", message: "Please ensure there is no empty frame!", complete: nil)
-                return
+        for each in bkView.subviews {
+            if let view = each as? UIImageView {
+                if view.image == nil {
+                    FRDisplayAlert(title: "Reminder", message: "Please ensure there is no empty frame!", complete: nil)
+                    return
+                }
             }
         }
         let image = UIImage(view: bkView)
@@ -770,7 +772,7 @@ class MainViewController: BaseViewController {
         let tag = (gesture.view)!.tag
         selectedFrame = tag
         if frames[selectedFrame].image == nil {
-            let actionSheet = UIActionSheet(title: "Add A Photo", delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: nil, otherButtonTitles: "Take A Photo", "Select From Gallery")
+            let actionSheet = UIActionSheet(title: "Add A Photo", delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: nil, otherButtonTitles: "Take A Photo", "Select From Gallery", "Remove")
             actionSheet.show(in: self.view)
         } else {
             let actionSheet = UIActionSheet(title: "Edit Photo", delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: nil, otherButtonTitles: "Crop & Rotate", "Replace", "Remove")
@@ -862,8 +864,10 @@ extension MainViewController: UIActionSheetDelegate {
         case "Remove":
             let alertController = UIAlertController(title: "", message: "Are you sure to remove this photo?", preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action) in
+                debugPrint(self.selectedFrame)
                 self.frames[self.selectedFrame].snp.removeConstraints()
                 self.frames[self.selectedFrame].removeFromSuperview()
+//                self.frames.remove(at: self.selectedFrame)
             }))
             alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
             present(alertController, animated: true, completion: nil)

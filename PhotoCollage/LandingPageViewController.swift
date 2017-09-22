@@ -62,7 +62,7 @@ public class FRPhotoCollageCreate: UIViewController {
         let t = UILabel()
         t.font = UIFont.DefaultSemiBoldWithSize(size: Scale.scaleY(y: 12))
         t.textColor = UIColor.phtAzure
-        t.text = "No, I don’t want to participate"
+        t.text = "Back"
         t.textAlignment = .center
         return t
     }()
