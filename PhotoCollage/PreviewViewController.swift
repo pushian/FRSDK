@@ -238,8 +238,8 @@ class PreviewViewController: BaseViewController {
 //        for (name,(age,gender)) in zip(names,zip(ages,genders)) {
         debugPrint(collageId)
         
-        SVProgressHUD.show()
-        SVProgressHUD.show(withStatus: "Uploading the image...")
+//        SVProgressHUD.show()
+//        SVProgressHUD.show(withStatus: "Uploading the image...")
         processCount = 0
         processedSuccess = 0
         processedFail = 0
@@ -379,7 +379,7 @@ extension PreviewViewController: MFMailComposeViewControllerDelegate {
         } else {
             SVProgressHUD.showSuccess(withStatus: "Saved to album")
 //            SVProgressHUD.showSuccess(withStatus: <#T##String!#>)
-            _ = self.dismiss(animated: true, completion: nil)
+//            _ = self.dismiss(animated: true, completion: nil)
 
         }
     }
