@@ -27,13 +27,15 @@ class MainViewController: BaseViewController {
     fileprivate var images: [UIImage?] = [nil, nil, nil, nil, nil]
     fileprivate var lats: [String?] = [nil, nil, nil, nil, nil]
     fileprivate var lons: [String?] = [nil, nil, nil, nil, nil]
+    fileprivate var times: [String?] = [nil, nil, nil, nil, nil]
     
     fileprivate var totalCount = 0
     fileprivate var count = 0
     fileprivate var validImages = [UIImage]()
     fileprivate var validLats = [String?]()
     fileprivate var validLons = [String?]()
-    
+    fileprivate var validTime = [String?]()
+
     fileprivate var mostFaces: UIImage?
     fileprivate var oneFace = [UIImage]()
     fileprivate var moreFace = [UIImage]()
@@ -41,13 +43,17 @@ class MainViewController: BaseViewController {
     
     fileprivate var mostFaceLat: String?
     fileprivate var mostFaceLon: String?
+    fileprivate var mostFaceDate: String?
     fileprivate var noFaceLat = [String?]()
     fileprivate var noFaceLon = [String?]()
+    fileprivate var noFaceDate = [String?]()
     fileprivate var oneFaceLat = [String?]()
     fileprivate var oneFaceLon = [String?]()
+    fileprivate var oneFaceDate = [String?]()
     fileprivate var moreFaceLat = [String?]()
     fileprivate var moreFaceLon = [String?]()
-    
+    fileprivate var moreFaceDate = [String?]()
+
     fileprivate var didLoad = false
     fileprivate var selectedIndex = 0
     fileprivate var selectedFrame = 0
@@ -324,10 +330,17 @@ class MainViewController: BaseViewController {
                     width = theMax * ratio
                 }
                 
-                let targetSize = CGSize(width: width, height: height)
                 
                 let lat = ass.location?.coordinate.latitude
                 let lon = ass.location?.coordinate.longitude
+                let date = ass.creationDate
+                
+                let targetSize = CGSize(width: width, height: height)
+                let str = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+                let format = DateFormatter()
+                format.dateFormat = str
+                let dateStr = format.string(from: date!)
+                validTime.append(dateStr)
                 validLats.append(String(lat!))
                 validLons.append(String(lon!))
                 
@@ -351,10 +364,9 @@ class MainViewController: BaseViewController {
         let detector = CIDetector(ofType: CIDetectorTypeFace, context: nil, options: [CIDetectorAccuracy: CIDetectorAccuracyHigh])
         var tmpCount = 0
         var max: Int? = 0
-        for (face, (lat, lon)) in zip(self.validImages, zip(self.validLats, self.validLons)){
+        for (date, (face, (lat, lon))) in zip(self.validTime, zip(self.validImages, zip(self.validLats, self.validLons))) {
             tmpCount = tmpCount + 1
             let ciImage = CIImage(image: face)
-//            let accuracy = cide
             let foundFaces = detector?.features(in: ciImage!)
             debugPrint("found faces: \(foundFaces?.count)")
             if let count = foundFaces?.count {
@@ -362,32 +374,30 @@ class MainViewController: BaseViewController {
                     self.mostFaces = face
                     self.mostFaceLat = lat
                     self.mostFaceLon = lon
+                    self.mostFaceDate = date
                     max = foundFaces?.count
                     debugPrint("updated max is \(max)")
                 } else if count == 0 {
                     self.noFace.append(face)
                     self.noFaceLat.append(lat)
                     self.noFaceLon.append(lon)
+                    self.noFaceDate.append(date)
                 } else if count == 1 {
                     self.oneFace.append(face)
                     self.oneFaceLat.append(lat)
                     self.oneFaceLon.append(lon)
+                    self.oneFaceDate.append(date)
                 } else {
                     self.moreFace.append(face)
                     self.moreFaceLat.append(lat)
                     self.moreFaceLon.append(lon)
+                    self.moreFaceDate.append(date)
                 }
             }
         }
-        debugPrint("data collection")
-        debugPrint(noFace.count)
-        debugPrint(oneFace.count)
-        debugPrint(moreFace.count)
-        debugPrint(mostFaces)
         
         self.validImages = [UIImage]()
         SVProgressHUD.dismiss()
-//        Async.main{
         DispatchQueue.main.async {
             self.updateFrames()
         }
@@ -636,6 +646,7 @@ class MainViewController: BaseViewController {
         images[index] = image
         lats[index] = noFaceLat[randomIndex]
         lons[index] = noFaceLon[randomIndex]
+        times[index] = noFaceDate[randomIndex]
         noFace.remove(at: randomIndex)
         return true
 
@@ -654,6 +665,7 @@ class MainViewController: BaseViewController {
         images[index] = image
         lats[index] = oneFaceLat[randomIndex]
         lons[index] = oneFaceLon[randomIndex]
+        times[index] = oneFaceDate[randomIndex]
         oneFace.remove(at: randomIndex)
         return true
     }
@@ -672,6 +684,7 @@ class MainViewController: BaseViewController {
         images[index] = image
         lats[index] = moreFaceLat[randomIndex]
         lons[index] = moreFaceLon[randomIndex]
+        times[index] = moreFaceDate[randomIndex]
         moreFace.remove(at: randomIndex)
         return true
     }
@@ -688,6 +701,7 @@ class MainViewController: BaseViewController {
         images[index] = mostFaces
         lats[index] = mostFaceLat
         lons[index] = mostFaceLon
+        times[index] = mostFaceDate
         mostFaces = nil
         return true
     }
@@ -703,7 +717,7 @@ class MainViewController: BaseViewController {
             }
         }
         let image = UIImage(view: bkView)
-        let vc = PreviewViewController(image: image, images: images, userId: userId, lats: lats, lons: lons)
+        let vc = PreviewViewController(image: image, images: images, userId: userId, lats: lats, lons: lons, dates: times)
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -950,6 +964,13 @@ extension MainViewController: UIImagePickerControllerDelegate, UINavigationContr
                     lats[selectedFrame] = lat
                     let lon = String(location.coordinate.longitude)
                     lons[selectedFrame] = lon
+                }
+                if let date = asset.creationDate {
+                    let str = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+                    let format = DateFormatter()
+                    format.dateFormat = str
+                    let dateStr = format.string(from: date)
+                    times[selectedFrame] = dateStr
                 }
                 // ... Other stuff like dismiss omitted
             }

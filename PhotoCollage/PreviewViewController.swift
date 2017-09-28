@@ -25,6 +25,8 @@ class PreviewViewController: BaseViewController {
     fileprivate var lats = [String?]()
     fileprivate var lons = [String?]()
     fileprivate var shared = [String]()
+    fileprivate var times = [String?]()
+
     
     fileprivate var bkView: UIImageView = {
         let t = UIImageView()
@@ -100,13 +102,14 @@ class PreviewViewController: BaseViewController {
         t.clipsToBounds = true
         return t
     }()
-    init(image: UIImage, images: [UIImage?], userId: String, lats: [String?], lons: [String?]) {
+    init(image: UIImage, images: [UIImage?], userId: String, lats: [String?], lons: [String?], dates: [String?]) {
         super.init(nibName: nil, bundle: nil)
         self.image = image
         self.faceImages = images
         self.userId = userId
         self.lats = lats
         self.lons = lons
+        self.times = dates
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -144,7 +147,7 @@ class PreviewViewController: BaseViewController {
         view.addSubview(mailView)
         
         
-        setRightBtn(title: "Save and Done")
+        setRightBtn(title: "Done & Save")
         setTitle(title: "Preview")
         
         setConstraints()
@@ -244,18 +247,23 @@ class PreviewViewController: BaseViewController {
         processedSuccess = 0
         processedFail = 0
         
-        for (face, (lat, lon)) in zip(faceImages, zip(lats, lons)) {
+        for (time, (face, (lat, lon))) in zip(times, zip(faceImages, zip(lats, lons))) {
             if let face = face {
                 processCount = processCount + 1
                 var latString = lat
                 var lonString = lon
+                var timeString = time
+
                 if latString == nil {
                     latString = "empty"
                 }
                 if lonString == nil {
                     lonString = "empty"
                 }
-                HttpClient.sharedInstance.sendImage(image: face, userId: userId, collageId: collageId, shared: self.shared, lat: latString!, lon: lonString!, completion: { (isSuccess) in
+                if timeString == nil {
+                    timeString = "empty"
+                }
+                HttpClient.sharedInstance.sendImage(image: face, userId: userId, collageId: collageId, shared: self.shared, lat: latString!, lon: lonString!, date: timeString!, completion: { (isSuccess) in
                     debugPrint(isSuccess)
                     if isSuccess {
                         self.processedSuccess = self.processedSuccess + 1

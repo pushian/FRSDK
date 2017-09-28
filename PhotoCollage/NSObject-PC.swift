@@ -22,3 +22,17 @@ func PostAlertNotification(title: String, message: String) {
     let notification = Notification(name: Constants.notifications.FRdisplayAlert, object: info, userInfo: nil)
     NotificationCenter.default.post(notification)
 }
+
+//public func FRSDKStartMonitoring(completion: @escaping (_ startTime: Date) -> Void) {
+
+//    var count = 0
+//    while count < 10 {
+//        count = count + 1
+//    }
+//    completion(Date())
+    
+//    timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(queryConversations), userInfo: nil, repeats: true)
+    
+    
+//}
+

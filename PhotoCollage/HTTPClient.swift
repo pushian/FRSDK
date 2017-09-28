@@ -18,7 +18,7 @@ class HttpClient: NSObject {
     
     weak var delegate: HttpClientDelegte?
     //MARK: - Settings
-    func sendImage(image: UIImage, userId: String, collageId: String, shared: [String], lat: String, lon: String, completion: @escaping (_ isSuccess: Bool) -> Void) {
+    func sendImage(image: UIImage, userId: String, collageId: String, shared: [String], lat: String, lon: String, date: String, completion: @escaping (_ isSuccess: Bool) -> Void) {
         let url = "https://sandbox.facerecog.io/"
         debugPrint(url)
         
@@ -35,7 +35,9 @@ class HttpClient: NSObject {
                 }
             }
         }
-        sup = sup + "location: \(lat), \(lon)"
+        sup = sup + "location: \(lat), \(lon), "
+        
+        sup = sup + "timestamp_photo_taken: \(date)"
         debugPrint(sup)
         
         Alamofire.upload(
