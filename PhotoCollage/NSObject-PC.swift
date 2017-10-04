@@ -49,7 +49,8 @@ public func FRSDKStartMonitoring(completion: @escaping (_ isSuccess: Bool) -> Vo
                 format.dateFormat = str
                 let date = format.date(from: time)!
                 let diff = Date().timeIntervalSince(date)
-                let min = diff / Double(60)
+                let min = diff / Double(3600)
+                debugPrint("the difference is \(min) mins")
                 if min > 90 {
                     completion(true)
                     FRUser.currentUser.enteringTime = nil
