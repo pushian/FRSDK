@@ -52,11 +52,11 @@ class HttpClient: NSObject {
             method: .post,
 //            headers: User.currentUser.headers,
             encodingCompletion: { encodingResult in
-                
+//                debugPrint(encodingResult)
                 switch encodingResult {
                 case .success(let upload, _, _):
                     upload.responseJSON { response in
-//                        debugPrint(response)
+                        debugPrint(response)
                         let code = (response.response?.statusCode) ?? 500
                         if code >= 200 && code <= 299 {
                             completion(true)
