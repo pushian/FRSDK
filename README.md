@@ -35,7 +35,20 @@ into your Xcode project.
 
 ```swift
 import FRSDK
+```
 
+## Location Checking SDK
+
+```swift
+FRSDKStartMonitoring { (isSuccess) in
+            debugPrint(isSuccess)
+}
+```
+**Each time** the application is launched, the above function should be called to whether the location notification should be triggered. If the return vailable is true, the location notification should be triggered. Otherwise, it should remain quiet.
+
+## Photo Collage Create SDK
+
+```swift
 class MyViewController: UIViewController {
 
    func functionToTriggerPhotoCollage() {
