@@ -23,6 +23,8 @@ class FRLocation: NSObject {
     }
     
     func start() {
+//        locationManager.requestAlwaysAuthorization()
+        locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
     }
     
