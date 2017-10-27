@@ -8,13 +8,13 @@
 
 import UIKit
 
-class OpenViewController: BaseViewController {
+class OpenViewController: UIViewController {
 
     fileprivate var sdkBtn: UIButton! = {
         let t = UIButton()
         t.setTitle("SDK Test", for: .normal)
         t.setTitleColor(.white, for: .normal)
-        t.titleLabel?.font = UIFont.DefaultRegularWithSize(size: Scale.scaleY(y: 12))
+        t.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         t.backgroundColor = UIColor.phtMidGreen
         t.clipsToBounds = true
         t.layer.cornerRadius = Scale.scaleY(y: 40) / 2

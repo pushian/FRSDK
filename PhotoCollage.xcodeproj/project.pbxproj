@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		850BE5F11FA2CA9A00B6EC96 /* FontBlaster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850BE5F01FA2CA9A00B6EC96 /* FontBlaster.swift */; };
+		850BE5F21FA2CAFE00B6EC96 /* FontBlaster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850BE5F01FA2CA9A00B6EC96 /* FontBlaster.swift */; };
 		855DFB921F54185A00684194 /* EditPhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B9214E1F541421004C0062 /* EditPhotoViewController.swift */; };
 		855DFB951F541CFE00684194 /* InstagramManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855DFB941F541CFE00684194 /* InstagramManager.swift */; };
 		855DFB961F541DAB00684194 /* InstagramManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855DFB941F541CFE00684194 /* InstagramManager.swift */; };
@@ -162,6 +164,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		850BE5F01FA2CA9A00B6EC96 /* FontBlaster.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontBlaster.swift; sourceTree = "<group>"; };
 		8530F81C1F5407710094EB49 /* PushianPhotoTweaks.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PushianPhotoTweaks.framework; path = Carthage/Build/iOS/PushianPhotoTweaks.framework; sourceTree = "<group>"; };
 		855DFB941F541CFE00684194 /* InstagramManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstagramManager.swift; sourceTree = "<group>"; };
 		855DFBA21F54536E00684194 /* CGFloat+IGRPhonoTweakExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGFloat+IGRPhonoTweakExtension.swift"; sourceTree = "<group>"; };
@@ -470,6 +473,7 @@
 		85C51D391F4ACC5C00700BEF /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				850BE5F01FA2CA9A00B6EC96 /* FontBlaster.swift */,
 				85C51D3A1F4ACC6B00700BEF /* Scale.swift */,
 				85C51D461F4C813200700BEF /* Constant.swift */,
 			);
@@ -702,6 +706,7 @@
 				855DFBCB1F54536E00684194 /* CGFloat+IGRPhonoTweakExtension.swift in Sources */,
 				855DFBE61F54536E00684194 /* IGRPhotoTweakView+NSLayoutConstraint.swift in Sources */,
 				855DFBCE1F54536E00684194 /* UIColor+IGRPhonoTweakExtension.swift in Sources */,
+				850BE5F11FA2CA9A00B6EC96 /* FontBlaster.swift in Sources */,
 				855DFBE31F54536E00684194 /* IGRPhotoTweakView+Customization.swift in Sources */,
 				85C51D551F4E7C3000700BEF /* UIImageView-PC.swift in Sources */,
 				855DFBDD1F54536E00684194 /* IGRCropCornerView.swift in Sources */,
@@ -761,6 +766,7 @@
 				855DFC0A1F5453F000684194 /* IGRPhotoTweakView+UIScrollView.swift in Sources */,
 				855DFC0B1F5453F000684194 /* IGRPhotoTweakView.swift in Sources */,
 				855DFC0C1F5453F000684194 /* IGRPhotoContentView.swift in Sources */,
+				850BE5F21FA2CAFE00B6EC96 /* FontBlaster.swift in Sources */,
 				855DFC0D1F5453F000684194 /* IGRPhotoScrollView.swift in Sources */,
 				855DFC0E1F5453F000684194 /* NSObject-PC.swift in Sources */,
 				85C51D6A1F4EAF4900700BEF /* BaseViewController.swift in Sources */,

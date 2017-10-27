@@ -23,7 +23,6 @@ public class FRPhotoCollageCreate: UIViewController {
     fileprivate var userId = ""
     fileprivate var titleLabel: UILabel! = {
         let t = UILabel()
-        t.font = UIFont.DefaultSemiBoldWithSize(size: Scale.scaleY(y: 14))
         t.textColor = UIColor.black
         t.text = "#thestateoffun moments"
         t.textAlignment = .center
@@ -38,7 +37,6 @@ public class FRPhotoCollageCreate: UIViewController {
     }()
     fileprivate var infoLabel: UILabel! = {
         let t = UILabel()
-        t.font = UIFont.DefaultSemiBoldWithSize(size: Scale.scaleY(y: 24))
         t.textColor = UIColor.black
         t.text = "Create your own unique collage with the photos you took in Sentosa!"
         t.textAlignment = .center
@@ -52,7 +50,6 @@ public class FRPhotoCollageCreate: UIViewController {
         let image = UIImage.FRGetBundleImage(name: "rightArrow")
         t.setImage(image, for: .normal)
         t.setTitleColor(.white, for: .normal)
-        t.titleLabel?.font = UIFont.DefaultRegularWithSize(size: Scale.scaleY(y: 12))
         t.backgroundColor = UIColor.phtMidGreen
         t.clipsToBounds = true
         t.layer.cornerRadius = Scale.scaleY(y: 40) / 2
@@ -60,7 +57,6 @@ public class FRPhotoCollageCreate: UIViewController {
     }()
     fileprivate var cancelLabel: UILabel! = {
         let t = UILabel()
-        t.font = UIFont.DefaultSemiBoldWithSize(size: Scale.scaleY(y: 12))
         t.textColor = UIColor.phtAzure
         t.text = "Back"
         t.textAlignment = .center
@@ -70,6 +66,10 @@ public class FRPhotoCollageCreate: UIViewController {
     public init(uniqueId: String) {
         super.init(nibName: nil, bundle: nil)
         self.userId = uniqueId
+        FontBlaster.blast() { (fonts) in
+            debugPrint("i am printing fonts")
+            print(fonts) // fonts is an array of Strings containing font names
+        }
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -92,12 +92,16 @@ public class FRPhotoCollageCreate: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(displayAlert(notification:)), name: Constants.notifications.FRdisplayAlert, object: nil)
 
         view.addSubview(titleLabel)
+        titleLabel.font = UIFont.DefaultSemiBoldWithSize(size: Scale.scaleY(y: 14))
         view.addSubview(coverImage)
         view.addSubview(infoLabel)
+        infoLabel.font = UIFont.DefaultSemiBoldWithSize(size: Scale.scaleY(y: 24))
         view.addSubview(okBtn)
+        okBtn.titleLabel?.font = UIFont.DefaultRegularWithSize(size: Scale.scaleY(y: 12))
         okBtn.addTarget(self, action: #selector(okHandler), for: .touchUpInside)
         view.addSubview(cancelLabel)
-        
+        cancelLabel.font = UIFont.DefaultSemiBoldWithSize(size: Scale.scaleY(y: 12))
+
         cancelLabel.isUserInteractionEnabled = true
         let gesture = UITapGestureRecognizer(target: self, action: #selector(cancelHandler))
         cancelLabel.addGestureRecognizer(gesture)

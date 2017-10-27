@@ -18,7 +18,7 @@ class BaseViewController: UIViewController {
     var leftBtn: UIImageView! = {
         let t = UIImageView()
         t.FRApplyBundleImage(name: "leftArrow")
-        t.contentMode = .center
+        t.contentMode = .left
         t.isUserInteractionEnabled = true
 //        t.setImage(UIImage.getBundleImage(name: "leftArrow"), for: .normal)
         return t
@@ -77,7 +77,7 @@ class BaseViewController: UIViewController {
         leftBtn.snp.makeConstraints { (make) in
             make.centerY.equalToSuperview()
 //            make.leading.equalTo(Scale.scaleX(x: 13))
-            make.leading.equalToSuperview()
+            make.leading.equalTo(Scale.scaleX(x: 15))
             make.width.equalTo(Scale.scaleX(x: 76))
             make.height.equalToSuperview()
         }

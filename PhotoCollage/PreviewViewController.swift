@@ -106,6 +106,7 @@ class PreviewViewController: BaseViewController {
         super.init(nibName: nil, bundle: nil)
         self.image = image
         self.faceImages = images
+        debugPrint("there is \(self.faceImages.count) images")
         self.userId = userId
         self.lats = lats
         self.lons = lons
@@ -270,8 +271,11 @@ class PreviewViewController: BaseViewController {
                     } else {
                         self.processedFail = self.processedFail + 1
                     }
-                    
+
                 })
+//                debugPrint("start to resize")
+//                face.resizeImage()
+//                debugPrint("end to resize")
             }
         }
 //        DispatchQueue.global(qos: .background).async {

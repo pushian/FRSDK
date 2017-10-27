@@ -75,12 +75,19 @@ class MainViewController: BaseViewController {
         t.clipsToBounds = true
         return t
     }()
+    fileprivate var bkCropView: UIImageView = {
+        let t = UIImageView()
+        t.backgroundColor = UIColor.clear
+        t.isUserInteractionEnabled = true
+        t.clipsToBounds = true
+        return t
+    }()
     
     fileprivate var overLay: UIView! = {
         let t = UIView()
         t.backgroundColor = .white
         t.alpha = 0.3
-        t.isUserInteractionEnabled = true
+        t.isUserInteractionEnabled = false
         return t
     }()
     fileprivate var collectionView: UICollectionView! = {
@@ -100,7 +107,7 @@ class MainViewController: BaseViewController {
     
     fileprivate var frames = [PhotoFrame(frame: CGRect.zero), PhotoFrame(frame: CGRect.zero), PhotoFrame(frame: CGRect.zero), PhotoFrame(frame: CGRect.zero), PhotoFrame(frame: CGRect.zero)]
     fileprivate var widths = [106, 92, 60, 118, 166]
-    fileprivate var heights = [147, 128, 95, 139, 120]
+    fileprivate var heights = [147, 128, 95, 120, 110]
 //    fileprivate var xs = []
     
     
@@ -112,7 +119,6 @@ class MainViewController: BaseViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -130,6 +136,7 @@ class MainViewController: BaseViewController {
         view.addSubview(infoLabel)
         view.addSubview(bkView)
         bkView.addSubview(overLay)
+        bkView.addSubview(bkCropView)
         bkView.image = Constants.testImages[selectedIndex]
         view.addSubview(collectionView)
         collectionView.delegate = self
@@ -190,6 +197,12 @@ class MainViewController: BaseViewController {
             make.trailing.equalToSuperview()
             make.height.equalTo(Constants.mainWidth * Constants.bkImageRatio)
             make.top.equalTo(infoLabel.snp.bottom).offset(Scale.scaleY(y: 14))
+        }
+        bkCropView.snp.makeConstraints { (make) in
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.top.equalToSuperview()
+            make.bottom.equalTo(Scale.scaleY(y: -55))
         }
         overLay.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
@@ -486,7 +499,7 @@ class MainViewController: BaseViewController {
         for each in frames {
             each.tag = tag
             tag += 1
-            bkView.addSubview(each)
+            bkCropView.addSubview(each)
         }
         
         for index in 0..<frames.count {
@@ -547,7 +560,7 @@ class MainViewController: BaseViewController {
                 rotateGestureThree.delegate = self
             case 3:
                 frames[index].snp.makeConstraints({ (make) in
-                    make.bottom.equalTo(Scale.scaleY(y: -35))
+                    make.bottom.equalTo(Scale.scaleY(y: -10))
                     make.leading.equalTo(Scale.scaleX(x: 25))
                     make.width.equalTo(widths[index])
                     make.height.equalTo(heights[index])
@@ -566,7 +579,7 @@ class MainViewController: BaseViewController {
                 rotateGestureFour.delegate = self
             default:
                 frames[index].snp.makeConstraints({ (make) in
-                    make.bottom.equalTo(Scale.scaleY(y: -60))
+                    make.bottom.equalTo(Scale.scaleY(y: -10))
                     make.trailing.equalTo(Scale.scaleX(x: -20))
                     make.width.equalTo(widths[index])
                     make.height.equalTo(heights[index])
@@ -708,7 +721,7 @@ class MainViewController: BaseViewController {
     
     override func rightHandler() {
         super.rightHandler()
-        for each in bkView.subviews {
+        for each in bkCropView.subviews {
             if let view = each as? UIImageView {
                 if view.image == nil {
                     FRDisplayAlert(title: "Reminder", message: "Please ensure there is no empty frame!", complete: nil)
@@ -732,10 +745,11 @@ class MainViewController: BaseViewController {
     }
     
     func PanHandler(gesture: UIPanGestureRecognizer) {
+        debugPrint("i am in")
         if ((gesture.state == .changed) || (gesture.state == .ended)) {
-            let translation = gesture.translation(in: bkView)
+            let translation = gesture.translation(in: bkCropView)
             gesture.view?.center = CGPoint(x: (gesture.view?.center.x)! + translation.x, y: (gesture.view?.center.y)! + translation.y)
-            gesture.setTranslation(CGPoint.zero, in: bkView)
+            gesture.setTranslation(CGPoint.zero, in: bkCropView)
         }
     }
 //    func PanHandlerTwo(gesture: UIPanGestureRecognizer) {
@@ -869,8 +883,10 @@ extension MainViewController: UIActionSheetDelegate {
             let vc = IGRPhotoTweakViewController()
             vc.image = self.frames[selectedFrame].image
             vc.delegate = self
+//            vc.rotata
             let nav = UINavigationController(rootViewController: vc)
             nav.navigationBar.isHidden = true
+            
             self.present(nav, animated: true, completion: nil)
         case "Replace":
             let actionSheet = UIActionSheet(title: "Replace a Photo", delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: nil, otherButtonTitles: "Take A Photo", "Select From Gallery")
@@ -881,7 +897,9 @@ extension MainViewController: UIActionSheetDelegate {
                 debugPrint(self.selectedFrame)
                 self.frames[self.selectedFrame].snp.removeConstraints()
                 self.frames[self.selectedFrame].removeFromSuperview()
+//                self.images.remove(at: self.selectedFrame)
 //                self.frames.remove(at: self.selectedFrame)
+                self.images[self.selectedFrame] = nil
             }))
             alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
             present(alertController, animated: true, completion: nil)

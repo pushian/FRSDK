@@ -32,6 +32,7 @@ import UIKit
         t.maximumValue = 180
         t.minimumValue = -180
 //        t.set
+        t.isHidden = true // yf modification
         return t
     }()
     
