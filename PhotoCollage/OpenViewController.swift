@@ -39,6 +39,24 @@ class OpenViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        FRSDKStartMonitoring { (isSuccess) in
+            if isSuccess {
+                let alertController = UIAlertController(title: "i am going to give an alert", message: "message", preferredStyle: .alert)
+                alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+                    
+                }))
+                self.present(alertController, animated: true, completion: nil)
+            } else {
+                let alertController = UIAlertController(title: "there won't be any alert", message: "message", preferredStyle: .alert)
+                alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+                    
+                }))
+                self.present(alertController, animated: true, completion: nil)
+            }
+        }
+    }
     func sdkHandler() {
         let vc = FRPhotoCollageCreate(uniqueId: "yangfan liu")
         vc.delegate = self

@@ -19,9 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         //each time the app is open, deploy the following function
-        FRSDKStartMonitoring { (isSuccess) in
-            debugPrint(isSuccess)
-        }
+        
         setupGeneralAppearance()
         window = UIWindow(frame: UIScreen.main.bounds)
         window!.rootViewController = OpenViewController()

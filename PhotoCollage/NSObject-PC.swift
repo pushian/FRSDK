@@ -47,34 +47,44 @@ public func FRSDKStartMonitoring(completion: @escaping (_ isSuccess: Bool) -> Vo
                 let format = DateFormatter()
                 let str = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
                 format.dateFormat = str
+                format.locale = Locale.init(identifier: "en_SG")
+                format.timeZone = TimeZone.init(identifier: "Asia/Singapore")
+
                 let date = format.date(from: time)!
                 let diff = Date().timeIntervalSince(date)
                 let min = diff / Double(60)
                 debugPrint(format.string(from: Date()))
                 debugPrint("the difference is \(min) mins")
+                
                 if min > 90 {
                     completion(true)
                     FRUser.currentUser.enteringTime = nil
                     FRUser.currentUser.saveToDefaults()
+                    return
                 } else {
                     completion(false)
+                    return
                 }
             } else {
                 let str = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
                 let format = DateFormatter()
                 format.dateFormat = str
                 let dateStr = format.string(from: Date())
+                debugPrint("recording the entry time")
                 FRUser.currentUser.enteringTime = dateStr
                 FRUser.currentUser.saveToDefaults()
                 completion(false)
+                return
             }
         } else {
             if let time = FRUser.currentUser.enteringTime {
                 completion(true)
                 FRUser.currentUser.enteringTime = nil
                 FRUser.currentUser.saveToDefaults()
+                return
             } else {
                 completion(false)
+                return
             }
         }
     }
