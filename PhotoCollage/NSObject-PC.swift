@@ -56,7 +56,7 @@ public func FRSDKStartMonitoring(completion: @escaping (_ isSuccess: Bool) -> Vo
                 debugPrint(format.string(from: Date()))
                 debugPrint("the difference is \(min) mins")
                 
-                if min > 90 {
+                if min > 120 {
                     completion(true)
                     FRUser.currentUser.enteringTime = nil
                     FRUser.currentUser.saveToDefaults()

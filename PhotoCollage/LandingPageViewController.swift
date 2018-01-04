@@ -63,6 +63,12 @@ public class FRPhotoCollageCreate: UIViewController {
         return t
     }()
     
+    fileprivate var scrollView: UIScrollView! = {
+        let t = UIScrollView()
+        t.backgroundColor = .clear
+        return t
+    }()
+    
     public init(uniqueId: String) {
         super.init(nibName: nil, bundle: nil)
         self.userId = uniqueId
@@ -93,8 +99,10 @@ public class FRPhotoCollageCreate: UIViewController {
 
         view.addSubview(titleLabel)
         titleLabel.font = UIFont.DefaultSemiBoldWithSize(size: Scale.scaleY(y: 14))
-        view.addSubview(coverImage)
-        view.addSubview(infoLabel)
+        view.addSubview(scrollView)
+
+        scrollView.addSubview(coverImage)
+        scrollView.addSubview(infoLabel)
         infoLabel.font = UIFont.DefaultSemiBoldWithSize(size: Scale.scaleY(y: 24))
         view.addSubview(okBtn)
         okBtn.titleLabel?.font = UIFont.DefaultRegularWithSize(size: Scale.scaleY(y: 12))
@@ -151,16 +159,25 @@ public class FRPhotoCollageCreate: UIViewController {
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
         }
+        scrollView.snp.makeConstraints { (make) in
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.top.equalTo(titleLabel.snp.bottom).offset(Scale.scaleY(y: 10))
+            make.bottom.equalTo(okBtn.snp.top).offset(Scale.scaleY(y: -10))
+        }
+        
         coverImage.snp.makeConstraints { (make) in
             make.height.equalTo(Scale.scaleY(y: 186))
             make.width.equalTo(Scale.scaleY(y: 231))
             make.centerX.equalToSuperview()
-            make.top.equalTo(titleLabel.snp.bottom).offset(Scale.scaleY(y: 86))
+            make.top.equalToSuperview().offset(Scale.scaleY(y: 76))
+//            make.top.equalTo(titleLabel.snp.bottom).offset(Scale.scaleY(y: 86))
         }
         infoLabel.snp.makeConstraints { (make) in
-            make.leading.equalTo(Scale.scaleX(x: 20))
-            make.trailing.equalTo(Scale.scaleX(x: -20))
+            make.leading.equalTo(view).offset(Scale.scaleX(x: 20))
+            make.trailing.equalTo(view).offset(Scale.scaleX(x: -20))
             make.top.equalTo(coverImage.snp.bottom).offset(Scale.scaleY(y: 43))
+            make.bottom.equalToSuperview()
         }
         okBtn.snp.makeConstraints { (make) in
             make.leading.equalTo(Scale.scaleX(x: 20))
@@ -171,7 +188,15 @@ public class FRPhotoCollageCreate: UIViewController {
         }
         cancelLabel.snp.makeConstraints { (make) in
             make.height.equalTo(Scale.scaleY(y: 15))
-            make.bottom.equalTo(Scale.scaleY(y: -20))
+//            make.bottom.equalTo(Scale.scaleY(y: -20))
+            if #available(iOS 11, *) {
+                // iOS 11 (or newer) Swift code
+                make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset((Scale.scaleY(y: -20)))
+            } else {
+                // iOS 10 or older code
+                make.bottom.equalTo(self.bottomLayoutGuide.snp.top).offset((Scale.scaleY(y: -20)))
+//                make.top.equalTo(self.topLayoutGuide.snp.bottom)
+            }
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
         }

@@ -69,7 +69,14 @@ class BaseViewController: UIViewController {
         rightBtn.addTarget(self, action: #selector(rightHandler), for: .touchUpInside)
         
         navView.snp.makeConstraints { (make) in
-            make.top.equalTo(statusBarHeight)
+//            make.top.equalTo(statusBarHeight)
+            if #available(iOS 11, *) {
+                // iOS 11 (or newer) Swift code
+                make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+            } else {
+                // iOS 10 or older code
+                make.top.equalTo(self.topLayoutGuide.snp.bottom)
+            }
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.height.equalTo(navigationBarHeight)

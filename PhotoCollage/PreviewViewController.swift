@@ -102,6 +102,12 @@ class PreviewViewController: BaseViewController {
         t.clipsToBounds = true
         return t
     }()
+    
+    fileprivate var scrollView: UIScrollView! = {
+        let t = UIScrollView()
+        t.backgroundColor = .clear
+        return t
+    }()
     init(image: UIImage, images: [UIImage?], userId: String, lats: [String?], lons: [String?], dates: [String?]) {
         super.init(nibName: nil, bundle: nil)
         self.image = image
@@ -127,9 +133,10 @@ class PreviewViewController: BaseViewController {
         
 //        navigationItem.title = "Preview & Share"
         bkView.image = self.image
-        view.addSubview(bkView)
-        view.addSubview(shareLabel)
-        view.addSubview(insView)
+        view.addSubview(scrollView)
+        scrollView.addSubview(bkView)
+        scrollView.addSubview(shareLabel)
+        scrollView.addSubview(insView)
         let insGesture = UITapGestureRecognizer(target: self, action: #selector(insHandler))
         insView.addGestureRecognizer(insGesture)
         let fbGesture = UITapGestureRecognizer(target: self, action: #selector(fbHandler))
@@ -142,10 +149,10 @@ class PreviewViewController: BaseViewController {
         let whatsGesture = UITapGestureRecognizer(target: self, action: #selector(waHandler))
         waView.addGestureRecognizer(whatsGesture)
 
-        view.addSubview(fbView)
-        view.addSubview(twtView)
-        view.addSubview(waView)
-        view.addSubview(mailView)
+        scrollView.addSubview(fbView)
+        scrollView.addSubview(twtView)
+        scrollView.addSubview(waView)
+        scrollView.addSubview(mailView)
         
         
         setRightBtn(title: "Done & Save")
@@ -155,20 +162,30 @@ class PreviewViewController: BaseViewController {
     }
     
     func setConstraints() {
-        bkView.snp.makeConstraints { (make) in
+        scrollView.snp.makeConstraints { (make) in
             make.top.equalTo(navView.snp.bottom)
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+        bkView.snp.makeConstraints { (make) in
+//            make.top.equalTo(navView.snp.bottom)
+            make.top.equalToSuperview()
+            make.leading.equalTo(view)
+            make.trailing.equalTo(view)
             make.height.equalTo(Constants.mainWidth * Constants.bkImageRatio)
         }
         shareLabel.snp.makeConstraints { (make) in
-            make.leading.equalToSuperview()
-            make.trailing.equalToSuperview()
+//            make.leading.equalToSuperview()
+//            make.trailing.equalToSuperview()
+            make.leading.equalTo(view)
+            make.trailing.equalTo(view)
+
             make.top.equalTo(bkView.snp.bottom).offset(Scale.scaleY(y: 32))
         }
         insView.snp.makeConstraints { (make) in
             make.height.width.equalTo(Scale.scaleY(y: 36))
-            make.leading.equalTo(Scale.scaleX(x: 50))
+            make.leading.equalTo(view).offset(Scale.scaleX(x: 50))
             make.top.equalTo(shareLabel.snp.bottom).offset(Scale.scaleY(y: 34))
         }
         fbView.snp.makeConstraints { (make) in
@@ -178,18 +195,20 @@ class PreviewViewController: BaseViewController {
         }
         waView.snp.makeConstraints { (make) in
             make.height.width.equalTo(Scale.scaleY(y: 36))
-            make.trailing.equalTo(-Scale.scaleX(x: 50))
+            make.trailing.equalTo(view).offset(-Scale.scaleX(x: 50))
             make.centerY.equalTo(insView)
         }
         twtView.snp.makeConstraints { (make) in
             make.height.width.equalTo(Scale.scaleY(y: 36))
             make.top.equalTo(insView.snp.bottom).offset(Scale.scaleY(y: 35))
             make.leading.equalTo(insView.snp.trailing).offset(Scale.scaleX(x: 16))
+            make.bottom.equalTo(Scale.scaleY(y: -34))
         }
         mailView.snp.makeConstraints { (make) in
             make.height.width.equalTo(Scale.scaleY(y: 36))
             make.trailing.equalTo(waView.snp.leading).offset(-Scale.scaleX(x: 16))
             make.centerY.equalTo(twtView)
+            make.bottom.equalTo(Scale.scaleY(y: -34))
         }
     }
     
@@ -319,7 +338,13 @@ class PreviewViewController: BaseViewController {
         let image: UIImage = self.image
         let arrayObject: [Any] = [image]
         let vc = UIActivityViewController(activityItems: arrayObject, applicationActivities: nil)
-        
+        vc.excludedActivityTypes = [
+            .airDrop, .addToReadingList, .assignToContact,
+            .mail, .postToFacebook, .postToTencentWeibo, .postToWeibo, .postToTwitter,
+            .saveToCameraRoll, .print, .openInIBooks,
+            UIActivityType(rawValue: "com.apple.mobilenotes.SharingExtension"),
+            UIActivityType(rawValue: "com.apple.reminders.RemindersEditorExtension")
+        ]
         self.present(vc, animated: true, completion: nil)
 
     }
@@ -369,7 +394,13 @@ class PreviewViewController: BaseViewController {
         let image: UIImage = self.image
         let arrayObject: [Any] = [image]
         let vc = UIActivityViewController(activityItems: arrayObject, applicationActivities: nil)
-        
+        vc.excludedActivityTypes = [
+            .airDrop, .addToReadingList, .assignToContact,
+            .mail, .postToFacebook, .postToTencentWeibo, .postToWeibo, .postToTwitter,
+            .saveToCameraRoll, .print, .openInIBooks,
+            UIActivityType(rawValue: "com.apple.mobilenotes.SharingExtension"),
+            UIActivityType(rawValue: "com.apple.reminders.RemindersEditorExtension")
+        ]
         self.present(vc, animated: true, completion: nil)
     }
 }

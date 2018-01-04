@@ -39,7 +39,7 @@ class HttpClient: NSObject {
         
         sup = sup + "timestamp_photo_taken: \(date)"
         debugPrint(sup)
-        
+//        Alamofire.SessionManager.default.reque
         Alamofire.upload(
             multipartFormData: { multipartFormData in
                 let newImage = image.resizeImage()

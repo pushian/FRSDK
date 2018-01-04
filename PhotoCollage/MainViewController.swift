@@ -93,15 +93,21 @@ class MainViewController: BaseViewController {
     fileprivate var collectionView: UICollectionView! = {
         let layout = UICollectionViewFlowLayout()
         let size = Scale.scaleY(y: 89)
-        layout.sectionInset = UIEdgeInsets(top: 0, left: Scale.scaleX(x: 20), bottom: 0, right: Scale.scaleX(x: 20))
+        layout.sectionInset = UIEdgeInsets(top: 5, left: Scale.scaleX(x: 20), bottom: 5, right: Scale.scaleX(x: 20))
         layout.itemSize = CGSize(width: size, height: size)
-        layout.minimumInteritemSpacing = Scale.scaleX(x: 20)
+        layout.minimumInteritemSpacing = Scale.scaleX(x: 1000)
         layout.minimumLineSpacing = Scale.scaleX(x: 20)
         layout.scrollDirection = .horizontal
         let t = UICollectionView(frame: CGRect(x: 0, y: 0, width: 0, height: 0), collectionViewLayout: layout)
         t.register(BKViewCollectionViewCell.self, forCellWithReuseIdentifier: BKViewCollectionViewCell.reuseIdentifier)
         t.backgroundColor = UIColor.white
         t.alwaysBounceHorizontal = true
+        return t
+    }()
+    
+    fileprivate var scrollView: UIScrollView! = {
+        let t = UIScrollView()
+        t.backgroundColor = .clear
         return t
     }()
     
@@ -133,12 +139,13 @@ class MainViewController: BaseViewController {
         self.navigationItem.backBarButtonItem?.isEnabled = false
         debugPrint(self.navigationItem.backBarButtonItem?.isEnabled)
 
-        view.addSubview(infoLabel)
-        view.addSubview(bkView)
+        view.addSubview(scrollView)
+        scrollView.addSubview(infoLabel)
+        scrollView.addSubview(bkView)
         bkView.addSubview(overLay)
         bkView.addSubview(bkCropView)
         bkView.image = Constants.testImages[selectedIndex]
-        view.addSubview(collectionView)
+        scrollView.addSubview(collectionView)
         collectionView.delegate = self
         collectionView.dataSource = self
 //        self.post
@@ -187,16 +194,26 @@ class MainViewController: BaseViewController {
 //    }
     
     func setConstraints() {
-        infoLabel.snp.makeConstraints { (make) in
+        scrollView.snp.makeConstraints { (make) in
             make.top.equalTo(navView.snp.bottom).offset(Scale.scaleY(y: 20))
-            make.leading.equalTo(Scale.scaleX(x: 20))
-            make.trailing.equalTo(Scale.scaleX(x: -20))
-        }
-        bkView.snp.makeConstraints { (make) in
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+        infoLabel.snp.makeConstraints { (make) in
+//            make.top.equalTo(navView.snp.bottom).offset(Scale.scaleY(y: 20))
+            make.top.equalToSuperview()
+            make.leading.equalTo(view).offset(Scale.scaleX(x: 20))
+            make.trailing.equalTo(view).offset(Scale.scaleX(x: -20))
+            make.bottom.equalTo(bkView.snp.top).offset(Scale.scaleY(y: -20))
+        }
+        bkView.snp.makeConstraints { (make) in
+//            make.leading.equalToSuperview()
+//            make.trailing.equalToSuperview()
+            make.leading.equalTo(view)
+            make.trailing.equalTo(view)
             make.height.equalTo(Constants.mainWidth * Constants.bkImageRatio)
-            make.top.equalTo(infoLabel.snp.bottom).offset(Scale.scaleY(y: 14))
+//            make.top.equalTo(infoLabel.snp.bottom).offset(Scale.scaleY(y: 14))
         }
         bkCropView.snp.makeConstraints { (make) in
             make.leading.equalToSuperview()
@@ -208,12 +225,27 @@ class MainViewController: BaseViewController {
             make.edges.equalToSuperview()
         }
         collectionView.snp.makeConstraints { (make) in
-            make.leading.equalToSuperview()
-            make.trailing.equalToSuperview()
-            make.bottom.equalToSuperview()
+//            make.leading.equalToSuperview()
+//            make.trailing.equalToSuperview()
+            make.leading.equalTo(view)
+            make.trailing.equalTo(view)
+            
+//            make.bottom.equalToSuperview()
+//            if #available(iOS 11, *) {
+//                // iOS 11 (or newer) Swift code
+//                make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
+//            } else {
+//                // iOS 10 or older code
+//                make.bottom.equalTo(self.bottomLayoutGuide.snp.top)
+////                make.top.equalTo(self.topLayoutGuide.snp.bottom)
+//            }
             make.top.equalTo(bkView.snp.bottom)
+            make.height.equalTo(120)
+            make.bottom.equalToSuperview()
+//            make.height.lessThanOrEqualTo(120)
         }
     }
+    
     
     func checkStatus() {
         // Get the current authorization state.
@@ -277,7 +309,44 @@ class MainViewController: BaseViewController {
         }
     }
     
+    func checkCameraPermission() -> Bool {
+//        let status = AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
+        let cameraMediaType = AVMediaTypeVideo
+        let cameraAuthorizationStatus = AVCaptureDevice.authorizationStatus(forMediaType: cameraMediaType)
+        
+        switch cameraAuthorizationStatus {
+        case .denied:
+            self.FRDisplayAlert(title: "Reminder", message: "The permission to access the camera has been denied. Please update the permission in Settings to enable the Photo Collage feature", complete: nil)
+            return false
+        case .authorized: return true
+        case .restricted:
+            self.FRDisplayAlert(title: "Reminder", message: "The permission to access the camera has been denied. Please update the permission in Settings to enable the Photo Collage feature", complete: nil)
+            return false
+        case .notDetermined:
+            // Prompting user for the permission to use the camera.
+            return true
+            AVCaptureDevice.requestAccess(forMediaType: cameraMediaType) { granted in
+                if granted {
+                    print("Granted access to \(cameraMediaType)")
+                } else {
+                    self.FRDisplayAlert(title: "Reminder", message: "The permission to access the camera has been denied. Please update the permission in Settings to enable the Photo Collage feature", complete: nil)
+                    print("Denied access to \(cameraMediaType)")
+                }
+            }
+        }
+    }
     
+    func checkPermission() -> Bool {
+        // Get the current authorization state.
+        let status = PHPhotoLibrary.authorizationStatus()
+        
+        if (status == PHAuthorizationStatus.authorized) {
+            // Access has been granted.
+            return true
+        }
+        self.FRDisplayAlert(title: "Reminder", message: "The permission to access the camera roll has been denied. Please update the permission in Settings to enable the Photo Collage feature", complete: nil)
+        return false
+    }
     
     func getPhoto() {
         let fetchOptions = PHFetchOptions()
@@ -857,6 +926,9 @@ extension MainViewController: UIActionSheetDelegate {
         case "Cancel":
             break
         case "Take A Photo":
+            if !checkCameraPermission() {
+                return
+            }
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                 let picker = UIImagePickerController()
                 picker.delegate = self
@@ -866,6 +938,9 @@ extension MainViewController: UIActionSheetDelegate {
                 FRDisplayAlert(title: "Error", message: "This device doesn't have camera.", complete: nil)
             }
         case "Select From Gallery":
+            if !checkPermission() {
+                return
+            }
             if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
                 let picker = UIImagePickerController()
                 

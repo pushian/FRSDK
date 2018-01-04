@@ -70,9 +70,14 @@ extension UIImage {
         var currentImage = self;
         debugPrint("=====================")
         debugPrint(imageData.count / 1024)
+        var count = 0
         if imageData.count >= (1024 * 2048) {
             while (imageData.count >= (1024 * 2048) || imageData.count <= (1024 * 2000))
             {
+                if imageData.count <= (1024 * 2000) && count > 10 {
+                    break
+                }
+                
                 if first {
                     factor = 0.5
                     first = false
@@ -90,9 +95,11 @@ extension UIImage {
                 currentImage = self.af_imageAspectScaled(toFill: currentSize)
                 imageData = UIImageJPEGRepresentation(currentImage, 1.0)!
                 debugPrint(imageData.count / 1024)
+                count = count + 1
+                debugPrint(count)
             }
         }
-
+        
         return currentImage
     }
     
