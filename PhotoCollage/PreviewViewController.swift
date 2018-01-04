@@ -106,6 +106,7 @@ class PreviewViewController: BaseViewController {
     fileprivate var scrollView: UIScrollView! = {
         let t = UIScrollView()
         t.backgroundColor = .clear
+        t.alwaysBounceVertical = true
         return t
     }()
     init(image: UIImage, images: [UIImage?], userId: String, lats: [String?], lons: [String?], dates: [String?]) {

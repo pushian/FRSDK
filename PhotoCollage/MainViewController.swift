@@ -108,6 +108,8 @@ class MainViewController: BaseViewController {
     fileprivate var scrollView: UIScrollView! = {
         let t = UIScrollView()
         t.backgroundColor = .clear
+        t.alwaysBounceVertical = true
+
         return t
     }()
     

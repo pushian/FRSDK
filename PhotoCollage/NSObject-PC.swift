@@ -51,6 +51,26 @@ public func FRSDKStartMonitoring(completion: @escaping (_ isSuccess: Bool) -> Vo
                 format.timeZone = TimeZone.init(identifier: "Asia/Singapore")
 
                 let date = format.date(from: time)!
+                
+                let calendar = Calendar.current
+                let recordedDay = calendar.component(.day, from: date)
+                let currentDay = calendar.component(.day, from: Date())
+                debugPrint(recordedDay)
+                debugPrint(currentDay)
+                if currentDay != recordedDay {
+                    let format = DateFormatter()
+                    let str = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+                    format.dateFormat = str
+                    format.locale = Locale.init(identifier: "en_SG")
+                    format.timeZone = TimeZone.init(identifier: "Asia/Singapore")
+                    let dateStr = format.string(from: Date())
+                    debugPrint("RE-recording the entry time")
+                    FRUser.currentUser.enteringTime = dateStr
+                    FRUser.currentUser.saveToDefaults()
+                    completion(false)
+                    return
+                }
+
                 let diff = Date().timeIntervalSince(date)
                 let min = diff / Double(60)
                 debugPrint(format.string(from: Date()))
@@ -66,9 +86,11 @@ public func FRSDKStartMonitoring(completion: @escaping (_ isSuccess: Bool) -> Vo
                     return
                 }
             } else {
-                let str = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
                 let format = DateFormatter()
+                let str = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
                 format.dateFormat = str
+                format.locale = Locale.init(identifier: "en_SG")
+                format.timeZone = TimeZone.init(identifier: "Asia/Singapore")
                 let dateStr = format.string(from: Date())
                 debugPrint("recording the entry time")
                 FRUser.currentUser.enteringTime = dateStr

@@ -66,6 +66,7 @@ public class FRPhotoCollageCreate: UIViewController {
     fileprivate var scrollView: UIScrollView! = {
         let t = UIScrollView()
         t.backgroundColor = .clear
+        t.alwaysBounceVertical = true
         return t
     }()
     
@@ -155,7 +156,13 @@ public class FRPhotoCollageCreate: UIViewController {
     
     func setConstraints() {
         titleLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(Scale.scaleY(y: 29))
+            if #available(iOS 11, *) {
+                // iOS 11 (or newer) Swift code
+                make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(9)
+            } else {
+                // iOS 10 or older code
+                make.top.equalTo(self.topLayoutGuide.snp.bottom).offset(9)
+            }
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
         }
