@@ -28,6 +28,11 @@ func PostAlertNotification(title: String, message: String) {
 public func FRSDKStartMonitoring(completion: @escaping (_ isSuccess: Bool) -> Void) {
 //    let location = FRLocation()
     let haveData = FRUser.awakeCurrentUserFromDefaults()
+    if FRUser.currentUser.havePoped == true {
+        debugPrint("have be poped up before so will be blocked here")
+
+        return
+    }
     debugPrint("i am checking whether do i have data: \(haveData)")
     debugPrint(FRUser.currentUser.enteringTime)
     FRLocation.currentLocation.start()
@@ -78,6 +83,7 @@ public func FRSDKStartMonitoring(completion: @escaping (_ isSuccess: Bool) -> Vo
                 
                 if min > 120 {
                     completion(true)
+                    FRUser.currentUser.havePoped = true
                     FRUser.currentUser.enteringTime = nil
                     FRUser.currentUser.saveToDefaults()
                     return
@@ -101,6 +107,7 @@ public func FRSDKStartMonitoring(completion: @escaping (_ isSuccess: Bool) -> Vo
         } else {
             if let time = FRUser.currentUser.enteringTime {
                 completion(true)
+                FRUser.currentUser.havePoped = true
                 FRUser.currentUser.enteringTime = nil
                 FRUser.currentUser.saveToDefaults()
                 return

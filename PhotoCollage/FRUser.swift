@@ -12,7 +12,7 @@ class FRUser: NSObject, NSCoding {
     
     static var currentUser = FRUser()
     var enteringTime: String?
-    
+    var havePoped: Bool?
 //    locationManager.desiredAccuracy = kCLLocationAccuracyBest
     
     
@@ -46,10 +46,12 @@ class FRUser: NSObject, NSCoding {
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(self.enteringTime, forKey: "enteringTime")
+        aCoder.encode(self.havePoped, forKey: "havePoped")
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init()
         enteringTime = aDecoder.decodeObject(forKey: "enteringTime") as? String
+        havePoped = aDecoder.decodeObject(forKey: "havePoped") as? Bool
     }
 }
