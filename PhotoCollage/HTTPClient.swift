@@ -20,9 +20,13 @@ class HttpClient: NSObject {
     //MARK: - Settings
     func sendImage(image: UIImage, userId: String, collageId: String, shared: [String], lat: String, lon: String, date: String, completion: @escaping (_ isSuccess: Bool) -> Void) {
 //        let url = "https://sandbox.facerecog.io/"
-        let url = "https://osp.facerecog.io/"
+        let url = "https://ospapim-prod.azure-api.net/facerecog"
         
         debugPrint(url)
+        
+        var myHeaders: [String: String] = [
+            "Ocp-Apim-Subscription-Key": "df0fc0e19be34d7faa7540f0723571a8"
+        ]
         
         var sup = "user_id: \(userId), collage_id: \(collageId), shared_on: ["
         if shared.count == 0 {
@@ -52,7 +56,7 @@ class HttpClient: NSObject {
         },
             to: url,
             method: .post,
-//            headers: User.currentUser.headers,
+            headers: myHeaders,
             encodingCompletion: { encodingResult in
 //                debugPrint(encodingResult)
                 switch encodingResult {

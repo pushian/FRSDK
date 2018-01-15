@@ -369,23 +369,36 @@ class PreviewViewController: BaseViewController {
     
     func fbHandler() {
         shared.append("Facebook")
-
-        if let vc = SLComposeViewController(forServiceType:SLServiceTypeFacebook) {
-            vc.add(image)
-//            vc.add(URL(string: "http://www.example.com/"))
-            vc.setInitialText("#thestateoffun moments")
-            self.present(vc, animated: true, completion: nil)
+        if SLComposeViewController.isAvailable(forServiceType: SLServiceTypeTwitter) {
+            if let vc = SLComposeViewController(forServiceType:SLServiceTypeFacebook) {
+                vc.add(image)
+                //            vc.add(URL(string: "http://www.example.com/"))
+                vc.setInitialText("#thestateoffun moments")
+                self.present(vc, animated: true, completion: nil)
+            } else {
+                FRDisplayAlert(title: "Reminder", message: "There is no Facebook installed on the phone.", complete: nil)
+            }
+        } else {
+            FRDisplayAlert(title: "Reminder", message: "There is no Facebook installed on the phone.", complete: nil)
         }
     }
     
     func twtHandler() {
         shared.append("Twitter")
 
-        if let vc = SLComposeViewController(forServiceType:SLServiceTypeTwitter) {
-            vc.add(image)
-//            vc.add(URL(string: "http://www.example.com/"))
-            vc.setInitialText("#thestateoffun moments")
-            self.present(vc, animated: true, completion: nil)
+        if SLComposeViewController.isAvailable(forServiceType: SLServiceTypeTwitter) {
+         
+            if let vc = SLComposeViewController(forServiceType:SLServiceTypeTwitter) {
+                vc.add(image)
+                //            vc.add(URL(string: "http://www.example.com/"))
+                vc.setInitialText("#thestateoffun moments")
+                self.present(vc, animated: true, completion: nil)
+            } else {
+                FRDisplayAlert(title: "Reminder", message: "There is no Twitter installed on the phone.", complete: nil)
+            }
+        } else {
+            FRDisplayAlert(title: "Reminder", message: "There is no Twitter installed on the phone.", complete: nil)
+
         }
     }
     
