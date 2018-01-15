@@ -215,6 +215,10 @@ class PreviewViewController: BaseViewController {
     
     override func rightHandler() {
         super.rightHandler()
+        if !checkPermission() {
+            return
+        }
+        
         let alertController = UIAlertController(title: "Reminder", message: "Sentosa will also receive the collage.", preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
             self.doneHandler()
@@ -229,6 +233,19 @@ class PreviewViewController: BaseViewController {
         _ = self.navigationController?.popViewController(animated: true)
     }
 
+    
+    func checkPermission() -> Bool {
+        // Get the current authorization state.
+        let status = PHPhotoLibrary.authorizationStatus()
+        
+        if (status == PHAuthorizationStatus.authorized) {
+            // Access has been granted.
+            return true
+        }
+        self.FRDisplayAlert(title: "Reminder", message: "The permission to access the camera roll has been denied. Please update the permission in Settings to enable the Photo Collage feature", complete: nil)
+        return false
+    }
+    
     func addAsset(image: UIImage, location: CLLocation? = nil) {
         PHPhotoLibrary.shared().performChanges({
             // Request creating an asset from the image.

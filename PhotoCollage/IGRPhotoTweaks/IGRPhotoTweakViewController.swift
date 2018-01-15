@@ -267,7 +267,7 @@ extension IGRPhotoTweakViewController: UIActionSheetDelegate {
                     picker.viewControllers[0].navigationItem.backBarButtonItem = backButton
                 })
             } else {
-                FRDisplayAlert(title: "Error", message: "This device doesn't have cameral roll.", complete: nil)
+                FRDisplayAlert(title: "Error", message: "This device doesn't have camera roll.", complete: nil)
             }
         case 1: // Take photo // edit
             if UIImagePickerController.isSourceTypeAvailable(.camera) {

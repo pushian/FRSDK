@@ -19,7 +19,9 @@ class HttpClient: NSObject {
     weak var delegate: HttpClientDelegte?
     //MARK: - Settings
     func sendImage(image: UIImage, userId: String, collageId: String, shared: [String], lat: String, lon: String, date: String, completion: @escaping (_ isSuccess: Bool) -> Void) {
-        let url = "https://sandbox.facerecog.io/"
+//        let url = "https://sandbox.facerecog.io/"
+        let url = "https://osp.facerecog.io/"
+        
         debugPrint(url)
         
         var sup = "user_id: \(userId), collage_id: \(collageId), shared_on: ["
