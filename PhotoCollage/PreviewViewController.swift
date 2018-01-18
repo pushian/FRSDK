@@ -219,14 +219,16 @@ class PreviewViewController: BaseViewController {
             return
         }
         
-        let alertController = UIAlertController(title: "Reminder", message: "Sentosa will also receive the collage.", preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
-            self.doneHandler()
-        }))
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action) in
-            UIImageWriteToSavedPhotosAlbum(self.image, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
-        }))
-        present(alertController, animated: true, completion: nil)
+        self.doneHandler()
+        
+//        let alertController = UIAlertController(title: "Reminder", message: "Sentosa will also receive the collage.", preferredStyle: .alert)
+//        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+//            self.doneHandler()
+//        }))
+//        alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action) in
+//            UIImageWriteToSavedPhotosAlbum(self.image, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
+//        }))
+//        present(alertController, animated: true, completion: nil)
     }
     
     override func leftHandler() {

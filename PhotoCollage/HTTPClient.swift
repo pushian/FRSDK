@@ -68,13 +68,13 @@ class HttpClient: NSObject {
                             completion(true)
                             return
                         } else {
-                            self.delegate?.alertMessage(title: "Error", message: "Server error.\nPlease try again later.")
+//                            self.delegate?.alertMessage(title: "Error", message: "Server error.\nPlease try again later.")
                         }
                         completion(false)
                     }//upload.responseJSON
                     
                 case .failure(let encodingError):
-                    self.delegate?.alertMessage(title: "Error", message: "Server error.\nPlease try again later.")
+//                    self.delegate?.alertMessage(title: "Error", message: "Server error.\nPlease try again later.")
                     completion(false)
                 }//switch
         }
